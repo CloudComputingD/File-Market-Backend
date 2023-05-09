@@ -5,6 +5,8 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Builder
 @Getter @Setter
@@ -34,7 +36,14 @@ public class Folder {
     @Column(nullable = false)
     private boolean favorite;
 
+    @Column(nullable = false)
+    private boolean trash;
+
     @ManyToOne
     @JoinColumn(name="user_id", nullable = false);
     private User user;
+
+    @OneToMany(mappedBy = "folder", cascade = {CascadeType.REMOVE})
+    private Set<FileFolder> files = new HashSet<>();
+
 }
