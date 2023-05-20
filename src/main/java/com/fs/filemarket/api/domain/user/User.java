@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Entity
-public class User {
+public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,14 +20,6 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Column
-    private String nickname;
-
-    // 제대로 동작하는지 test 필요
-    @PrePersist
-    public void there_is_no_nick() {
-        this.nickname = this.nickname == null ? name : this.nickname;
-    }
 
     // JPA 데이터베이스로 저장할 때 Enum 값을 어떤 형태로 저장할지 결정
     // 기본은 int 로 된 숫자이지만, DB 확인 시 편의성을 위해 문자열로 저장될 수 있도록 선언
@@ -42,16 +34,15 @@ public class User {
 //    private String password;
 
     @Builder
-    public User(Integer id, String name, String email, String nickname, Role role) {
+    public User(Integer id, String name, String email, Role role) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.nickname = nickname;
         this.role = role;
     }
 
-    public User update(String nickname) {
-        this.nickname = nickname;
+    public User update(String name) {
+        this.name = name;
 
         return this;
     }
