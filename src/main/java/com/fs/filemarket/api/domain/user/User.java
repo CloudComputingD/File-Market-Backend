@@ -26,7 +26,6 @@ public class User{
     @Column(nullable = false)
     private String password;
 
-    private String refreshToken;
 
     // JPA 데이터베이스로 저장할 때 Enum 값을 어떤 형태로 저장할지 결정
     // 기본은 int 로 된 숫자이지만, DB 확인 시 편의성을 위해 문자열로 저장될 수 있도록 선언
@@ -39,22 +38,19 @@ public class User{
 
     private String socialId;         // 로그인 한 소셜 타입의 식별자 값(일반 로그인의 경우, null)
 
+    private String refreshToken;
 
     @Builder
-    public User(Integer id, String name, String email, String login_id, String password, Role role) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.login_id = login_id;
-        this.password = password;
-        this.role = role;
-    }
-
-    public User update(String name) {
-        this.name = name;
-
-        return this;
-    }
+    public User(Integer id, String name, String email, String login_id, String password, Role role, SocialType socialType, String socialId ) {
+            this.id = id;
+            this.name = name;
+            this.email = email;
+            this.login_id = login_id;
+            this.password = password;
+            this.role = role;
+            this.socialType = socialType;
+            this.socialId = socialId;
+        }
 
 
     // 유저 권한 설정 메소드
