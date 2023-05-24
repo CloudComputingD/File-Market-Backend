@@ -40,3 +40,9 @@ out/
 
 ### Oauth ###
 application-oauth.properties
+
+### Aws ###
+application-aws.properties
+
+### Jwt ###
+application-jwt.properties
