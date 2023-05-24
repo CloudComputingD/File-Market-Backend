@@ -34,10 +34,10 @@ public class OAuthAttributes {
         return ofGoogle(userNameAttributeName, attributes);
     }
 
-    private static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
+    public static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
         return OAuthAttributes.builder()
                 .nameAttributeKey(userNameAttributeName)
-                .oauth2UserInfo(new GoogleOAuth2UserInfo(attributes))
+                .oAuth2UserInfo(new GoogleOAuth2UserInfo(attributes))
                 .build();
     }
 
