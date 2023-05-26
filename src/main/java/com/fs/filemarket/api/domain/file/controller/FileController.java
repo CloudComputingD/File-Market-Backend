@@ -4,17 +4,18 @@ import com.fs.filemarket.api.domain.file.service.FileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import java.util.UUID;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 // spring에서 제공하는 인터페이스로, http 요청에서 업로드된 파일을 나타낸다.
 // multipartfile을 사용하여 클라이언트가 전송한 파일을 서버에서 처리하고 저장할 수 있다.
 
+import java.io.IOException;
 import java.util.List;
 
 @Api(tags = {"File Controller"})
@@ -33,14 +34,53 @@ public class FileController {
     // 파일 이름 변경
     // 파일 중복 이름체크
     // trash안에 폴더가 들어가 있는지, 파일이 들어가있는지 .. ?
+
     private final FileService fileService;
 
-    @ApiOperation("파일을 업로드합니다.")
-    @PostMapping("/upload")
-    @ResponseStatus(value = HttpStatus.CREATED)
-    public ResponseEntity<String> fileUpload(@ApiParam(value = "file") MultipartFile file) {
-        String fileUrl = fileService.uploadFileToS3(file);
-        return ResponseEntity.status(HttpStatus.CREATED).body(fileUrl);
+    @ApiOperation("s3에 저장된 파일의 리스트를 반환합니다.")
+    @GetMapping("/{bucketName}")
+    public ResponseEntity<?> listFiles(
+            @PathVariable("bucketName") String bucketName
+    ) {
+        val body = fileService.listFiles(bucketName);
+        return ResponseEntity.ok(body);
+    }
+
+    @ApiOperation("s3에 파일을 업로드합니다.")
+    @PostMapping("/{bucketName}/upload")
+    @SneakyThrows(IOException.class)
+    public ResponseEntity<?> uploadFile(
+            @PathVariable("bucketName") String bucketName,
+            @RequestPart("file") MultipartFile file,
+            @RequestPart("fileName") String fileName
+    ) {
+        fileService.uploadFile(bucketName, fileName, file.getSize(), file.getContentType(), file.getInputStream());
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation("s3에서 파일을 다운로드합니다.")
+    @SneakyThrows
+    @GetMapping("/{bucketName}/download/{fileName}")
+    public ResponseEntity<?> downloadFile(
+            @PathVariable("bucketName") String bucketName,
+            @PathVariable("fileName") String fileName
+    ) {
+        val body = fileService.downloadFile(bucketName, fileName);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .contentType(FileMediaType.fromFilename(fileName))
+                .body(body.toByteArray());
+    }
+
+    @ApiOperation("s3에서 파일을 삭제합니다.")
+    @DeleteMapping("/{bucketName}/{fileName}")
+    public ResponseEntity<?> deleteFile(
+            @PathVariable("bucketName") String bucketName,
+            @PathVariable("fileName") String fileName
+    ) {
+        fileService.deleteFile(bucketName, fileName);
+        return ResponseEntity.ok().build();
     }
 
     @ApiOperation("유저의 전체 파일 list를 반환합니다.")
@@ -60,4 +100,6 @@ public class FileController {
     public ResponseEntity<List<String>> searchFile(@ApiParam(value="파일 이름", required = true) @RequestParam String fileName) {
         return ResponseEntity.ok(fileService.searchFile(fileName));
     }
+
+
 }
