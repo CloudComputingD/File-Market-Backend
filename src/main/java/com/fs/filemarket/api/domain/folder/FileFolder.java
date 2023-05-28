@@ -1,5 +1,6 @@
 package com.fs.filemarket.api.domain.folder;
 
+import com.fs.filemarket.api.domain.file.File;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
