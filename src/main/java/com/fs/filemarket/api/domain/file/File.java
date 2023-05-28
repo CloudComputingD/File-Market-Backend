@@ -1,10 +1,12 @@
 package com.fs.filemarket.api.domain.file;
 
 import com.fs.filemarket.api.domain.folder.FileFolder;
+import com.fs.filemarket.api.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.security.cert.Extension;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +36,13 @@ public class File {
 
     @Column
     private LocalDateTime deleted_time;
+
+    @Column
+    private String extension;
+
+    @Column
+    private Integer file_size;
+
 
     @Column(nullable = false) // 해당컬럼은 null값을 허용하지 않는다.
     private boolean favorite;

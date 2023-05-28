@@ -6,18 +6,19 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.*;
 
 
+import com.fs.filemarket.api.domain.file.File;
 import com.fs.filemarket.api.domain.folder.Folder;
 import com.fs.filemarket.api.domain.folder.dto.FolderResponseDto;
+import com.fs.filemarket.api.domain.user.User;
+import com.fs.filemarket.api.domain.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,29 +29,67 @@ import com.fs.filemarket.api.domain.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FileService {
+    protected final UserService userService;
     protected final FileRepository fileRepository;
     //    private final UserService userService;
     @Autowired
     private AmazonS3 s3Client;
+//    public void uploadFile(
+//            final String bucketName,
+//            final String keyName,
+//            final Long contentLength,
+//            final String contentType,
+//            final InputStream value
+//    ) throws AmazonClientException {
+//        ObjectMetadata metadata = new ObjectMetadata();
+//        metadata.setContentLength(contentLength);
+//        metadata.setContentType(contentType);
+//
+//        s3Client.putObject(bucketName, keyName, value, metadata);
+//        log.info("File uploaded to bucket({}): {}", bucketName, keyName);
+//    }
     public void uploadFile(
             final String bucketName,
-            final String keyName,
-            final Long contentLength,
-            final String contentType,
-            final InputStream value
+            List<MultipartFile> multipartFiles
     ) throws AmazonClientException {
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(contentLength);
-        metadata.setContentType(contentType);
-
-        s3Client.putObject(bucketName, keyName, value, metadata);
-        log.info("File uploaded to bucket({}): {}", bucketName, keyName);
+        User user= userService.getCurrentUser();
+        multipartFiles.forEach(file -> {
+            String fileName = file.getOriginalFilename();
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(file.getSize());
+            objectMetadata.setContentType(file.getContentType());
+//            log.info("가자");
+            try (InputStream inputStream = file.getInputStream()) {
+                PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead);
+                s3Client.putObject(putObjectRequest);
+                log.info("Content Type: {}", objectMetadata.getContentType());
+                log.info("Content Length: {}", objectMetadata.getContentLength());
+                log.info("File uploaded to bucket({}): {}", bucketName, fileName);
+                File save_file = fileRepository.save(
+                        File.builder()
+                                .name(fileName)
+                                .created_time(LocalDateTime.now())
+                                .modified_time(LocalDateTime.now())
+                                .user(user)
+                                .file_size((int) objectMetadata.getContentLength())
+                                .extension(objectMetadata.getContentType())
+                                .build()
+                );
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+    public String createFileName(String fileName){
+        return UUID.randomUUID().toString().concat(fileName);
     }
 
     public ByteArrayOutputStream downloadFile(
