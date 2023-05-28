@@ -1,22 +1,32 @@
 package com.fs.filemarket.api.domain.file.controller;
 
+import java.io.IOException;
+import java.util.List;
+
+import com.fs.filemarket.api.domain.file.File;
+import com.fs.filemarket.api.domain.file.enumeration.FileMediaType;
 import com.fs.filemarket.api.domain.file.service.FileService;
+import lombok.SneakyThrows;
+import lombok.val;
+import lombok.RequiredArgsConstructor;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.val;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 // spring에서 제공하는 인터페이스로, http 요청에서 업로드된 파일을 나타낸다.
 // multipartfile을 사용하여 클라이언트가 전송한 파일을 서버에서 처리하고 저장할 수 있다.
-
-import java.io.IOException;
-import java.util.List;
 
 @Api(tags = {"File Controller"})
 @RestController
@@ -34,9 +44,7 @@ public class FileController {
     // 파일 이름 변경
     // 파일 중복 이름체크
     // trash안에 폴더가 들어가 있는지, 파일이 들어가있는지 .. ?
-
     private final FileService fileService;
-
     @ApiOperation("s3에 저장된 파일의 리스트를 반환합니다.")
     @GetMapping("/{bucketName}")
     public ResponseEntity<?> listFiles(
@@ -82,24 +90,22 @@ public class FileController {
         fileService.deleteFile(bucketName, fileName);
         return ResponseEntity.ok().build();
     }
-
-    @ApiOperation("유저의 전체 파일 list를 반환합니다.")
-    @GetMapping(value = "/list/{userId}") // list/{userId}로 요청이 들어오면
-    public ResponseEntity<List<String>> getAllFile(@ApiParam(value = "유저 ID", required = true) @PathVariable final Integer userId) {
-        return ResponseEntity.ok(fileService.getAllFile(userId));
-    }
-
-    @ApiOperation("해당 ID의 파일 정보를 가져옵니다.")
-    @GetMapping(value = "/{fileId}}")
-    public ResponseEntity<FileResponseDto.Info> getFileById(@ApiParam(value="파일 ID", required = true) @PathVariable final Integer fileId) {
-        return ResponseEntity.ok(fileService.getFolderById(fileId));
-    }
-
-    @ApiOperation("파일을 이름으로 검색합니다.")
-    @GetMapping(value="/search")
-    public ResponseEntity<List<String>> searchFile(@ApiParam(value="파일 이름", required = true) @RequestParam String fileName) {
-        return ResponseEntity.ok(fileService.searchFile(fileName));
-    }
-
-
+//
+//    @ApiOperation("유저의 전체 파일 list를 반환합니다.")
+//    @GetMapping(value = "/list/{userId}") // list/{userId}로 요청이 들어오면
+//    public ResponseEntity<List<String>> getAllFile(@ApiParam(value = "유저 ID", required = true) @PathVariable final Integer userId) {
+//        return ResponseEntity.ok(fileService.getAllFile(userId));
+//    }
+//
+//    @ApiOperation("해당 ID의 파일 정보를 가져옵니다.")
+//    @GetMapping(value = "/{fileId}}")
+//    public ResponseEntity<FileResponseDto.Info> getFileById(@ApiParam(value="파일 ID", required = true) @PathVariable final Integer fileId) {
+//        return ResponseEntity.ok(fileService.getFolderById(fileId));
+//    }
+//
+//    @ApiOperation("파일을 이름으로 검색합니다.")
+//    @GetMapping(value="/search")
+//    public ResponseEntity<List<String>> searchFile(@ApiParam(value="파일 이름", required = true) @RequestParam String fileName) {
+//        return ResponseEntity.ok(fileService.searchFile(fileName));
+//    }
 }
