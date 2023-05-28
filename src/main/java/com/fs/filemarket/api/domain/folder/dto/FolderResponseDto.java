@@ -1,6 +1,9 @@
 package com.fs.filemarket.api.domain.folder.dto;
 
+import com.fs.filemarket.api.domain.file.dto.FileResponseDto;
+import com.fs.filemarket.api.domain.folder.FileFolder;
 import com.fs.filemarket.api.domain.folder.Folder;
+import com.fs.filemarket.api.domain.user.User;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class FolderResponseDto {
@@ -24,7 +28,7 @@ public class FolderResponseDto {
         private LocalDateTime deleted_time;
         private boolean favorite;
         private User user;
-        private Set<FileResponseDto.Folder> files;
+        private Set<FileResponseDto.Info> files;
 
         public static Info of(Folder folder) {
             return Info.builder()
@@ -37,7 +41,8 @@ public class FolderResponseDto {
                     .user(folder.getUser())
                     .files(folder.getFiles()
                             .stream()
-                            .map(FileResponseDto.Folder::of)
+                            .map(FileFolder::getFile)
+                            .map(FileResponseDto.Info::of)
                             .collect(Collectors.toSet()))
                     .build();
         }
