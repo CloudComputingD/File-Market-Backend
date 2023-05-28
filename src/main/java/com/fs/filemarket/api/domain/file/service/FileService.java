@@ -3,8 +3,10 @@ package com.fs.filemarket.api.domain.file.service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -14,15 +16,19 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 
+import com.fs.filemarket.api.domain.folder.Folder;
+import com.fs.filemarket.api.domain.folder.dto.FolderResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.fs.filemarket.api.domain.file.repository.FileRepository;
 //import com.fs.filemarket.api.domain.user.service.UserService;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Service
@@ -95,20 +101,92 @@ public class FileService {
         log.info("File deleted from bucket({}): {}", bucketName, keyName);
     }
 
+    // 여기서부터 db접근
+    // getAllFile
+    @Transactional(readOnly = true)
+    public List<String> getAllFile(Integer userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "해당하는 유저가 존재하지 않습니다."
+        ));
+        return fileRepository.findByUser(user).stream().map(Folder::getName).collect(Collectors.toList());
+    }
+    // getFileByID
+    @Transactional(readOnly = true)
+    public FolderResponseDto.Info getFileById(Integer folderId){
+        return FolderResponseDto.Info.of(fileRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 앨범이 존재하지 않습니다."
+        )));
+    }
+    // searchFile
+    @Transactional(readOnly = true)
+    public List<String> searchFile(String name){
+        return fileRepository.findByName(name).stream().map(Folder::getName).collect(Collectors.toList());
+    }
+    // favoriteFile
+    @Transactional
+    public void favoriteFile(Integer folderId) {
+        File file = fileRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
+        ));
+        if(file.isFavorite()){
+            file.setFavorite(false);
+        }
+        else {
+            file.setFavorite(true);
+        }
 
-//    private void removeNewFile(File targetFile) {
-//        if (targetFile.delete()) {
-//            log.info("파일이 삭제되었습니다.");
-//        } else {
-//            log.info("파일이 삭제되지 못했습니다.");
-//        }
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public List<String> getAllFile(Integer userId) {
-//        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(
-//                HttpStatus.NOT_FOUND, "해당하는 유저가 존재하지 않습니다."
-//        ));
-//        return fileRepository.findByUser(user).stream().map();
-//    }
+        fileRepository.save(file);
+    }
+    // renameFile
+    @Transactional
+    public String renameFile(Integer folderId, String newName) {
+        File file = fileRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
+        ));
+        file.setName(newName);
+        fileRepository.save(file);
+
+        return newName;
+    }
+    // trashFile
+    @Transactional
+    public Integer trashFolder(Integer folderId) {
+        File file = fileRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
+        ));
+
+        file.setTrash(true);
+        file.setDeleted_time(LocalDateTime.now());
+        fileRepository.save(file);
+
+        return fileId;
+    }
+    // restoreFile
+    @Transactional
+    public Integer restoreFile(Integer folderId) {
+        Folder file = fileRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
+        ));
+        file.setTrash(false);
+        file.setDeleted_time(null);
+        fileRepository.save(file);
+
+        return folderId;
+    }
+    // deleteFile
+    @Transactional
+    public void deleteFile(Integer folderId) {
+        File file = fileRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
+        ));
+        fileRepository.delete(file);
+    }
+    // getAllTrashFile
+    @Transactional(readOnly = true)
+    public List<String> getAllTrashFile(Integer userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "해당하는 유저가 존재하지 않습니다."
+        ));
+        return fileRepository.findByUserAndTrash(user).stream().map(Folder::getName).collect(Collectors.toList());
+    }
 }
