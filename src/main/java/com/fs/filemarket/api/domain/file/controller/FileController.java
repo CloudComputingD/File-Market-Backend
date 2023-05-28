@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.fs.filemarket.api.domain.file.File;
+import com.fs.filemarket.api.domain.file.dto.FileResponseDto;
 import com.fs.filemarket.api.domain.file.enumeration.FileMediaType;
 import com.fs.filemarket.api.domain.file.service.FileService;
 import lombok.SneakyThrows;
@@ -105,7 +106,7 @@ public class FileController {
     @ApiOperation("해당 ID의 파일 정보를 가져옵니다.")
     @GetMapping(value = "/{fileId}}")
     public ResponseEntity<FileResponseDto.Info> getFileById(@ApiParam(value="파일 ID", required = true) @PathVariable final Integer fileId) {
-        return ResponseEntity.ok(fileService.getFolderById(fileId));
+        return ResponseEntity.ok(fileService.getFileById(fileId));
     }
     @ApiOperation("파일을 이름으로 검색합니다.")
     @GetMapping(value="/search")
@@ -114,8 +115,8 @@ public class FileController {
     }
 
     @ApiOperation("파일에 좋아요 값을 설정합니다.")
-    @PostMapping(value="/favorite/{folderId}")
-    public ResponseEntity<Void> favoriteFile(@ApiParam(value="파일 ID", required = true) @PathVariable final Integer folderId) {
+    @PostMapping(value="/favorite/{fileId}")
+    public ResponseEntity<Void> favoriteFile(@ApiParam(value="파일 ID", required = true) @PathVariable final Integer fileId) {
         fileService.favoriteFile(fileId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
@@ -140,7 +141,7 @@ public class FileController {
     }
 
     @ApiOperation("파일을 휴지통에서 완전히 삭제합니다.")
-    @ApiOperation("value=/delete/{fileId}")
+    @DeleteMapping("value=/delete/{fileId}")
     public ResponseEntity<Void> deleteFile(@ApiParam(value="파일 ID", required = true) @PathVariable final Integer fileId) {
         fileService.deleteFile(fileId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();

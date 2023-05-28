@@ -54,6 +54,6 @@ public class File {
     private Set<FileFolder> folders = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name="user_id", nullable = false);
+    @JoinColumn(name="user_id", nullable = false)
     private User user;
 }

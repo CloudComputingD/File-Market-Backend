@@ -15,6 +15,7 @@ import com.amazonaws.services.s3.model.*;
 
 
 import com.fs.filemarket.api.domain.file.File;
+import com.fs.filemarket.api.domain.file.dto.FileResponseDto;
 import com.fs.filemarket.api.domain.folder.Folder;
 import com.fs.filemarket.api.domain.folder.dto.FolderResponseDto;
 import com.fs.filemarket.api.domain.user.User;
@@ -24,7 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.fs.filemarket.api.domain.file.repository.FileRepository;
-//import com.fs.filemarket.api.domain.user.service.UserService;
+import com.fs.filemarket.api.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +39,8 @@ import org.springframework.web.server.ResponseStatusException;
 public class FileService {
     protected final UserService userService;
     protected final FileRepository fileRepository;
-    //    private final UserService userService;
-    @Autowired
+    protected final UserRepository userRepository;
+
     private AmazonS3 s3Client;
 //    public void uploadFile(
 //            final String bucketName,
@@ -147,19 +148,19 @@ public class FileService {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 유저가 존재하지 않습니다."
         ));
-        return fileRepository.findByUser(user).stream().map(Folder::getName).collect(Collectors.toList());
+        return fileRepository.findByUser(user).stream().map(File::getName).collect(Collectors.toList());
     }
     // getFileByID
     @Transactional(readOnly = true)
-    public FolderResponseDto.Info getFileById(Integer folderId){
-        return FolderResponseDto.Info.of(fileRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
+    public FileResponseDto.Info getFileById(Integer fileId){
+        return FileResponseDto.Info.of(fileRepository.findById(fileId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 ID를 가진 앨범이 존재하지 않습니다."
         )));
     }
     // searchFile
     @Transactional(readOnly = true)
     public List<String> searchFile(String name){
-        return fileRepository.findByName(name).stream().map(Folder::getName).collect(Collectors.toList());
+        return fileRepository.findByName(name).stream().map(File::getName).collect(Collectors.toList());
     }
     // favoriteFile
     @Transactional
@@ -189,9 +190,9 @@ public class FileService {
     }
     // trashFile
     @Transactional
-    public Integer trashFolder(Integer folderId) {
-        File file = fileRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
+    public Integer trashFile(Integer fileId) {
+        File file = fileRepository.findById(fileId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 파일이 존재하지 않습니다."
         ));
 
         file.setTrash(true);
@@ -202,15 +203,15 @@ public class FileService {
     }
     // restoreFile
     @Transactional
-    public Integer restoreFile(Integer folderId) {
-        Folder file = fileRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
+    public Integer restoreFile(Integer fileId) {
+        File file = fileRepository.findById(fileId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
         ));
         file.setTrash(false);
         file.setDeleted_time(null);
         fileRepository.save(file);
 
-        return folderId;
+        return fileId;
     }
     // deleteFile
     @Transactional
@@ -226,6 +227,6 @@ public class FileService {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 유저가 존재하지 않습니다."
         ));
-        return fileRepository.findByUserAndTrash(user).stream().map(Folder::getName).collect(Collectors.toList());
+        return fileRepository.findByUserAndTrash(user).stream().map(File::getName).collect(Collectors.toList());
     }
 }
