@@ -4,6 +4,9 @@ import com.fs.filemarket.api.domain.folder.Folder;
 import com.fs.filemarket.api.domain.folder.dto.FolderResponseDto;
 import com.fs.filemarket.api.domain.folder.repository.FileFolderRepository;
 import com.fs.filemarket.api.domain.folder.repository.FolderRepository;
+import com.fs.filemarket.api.domain.user.User;
+import com.fs.filemarket.api.domain.user.repository.UserRepository;
+import com.fs.filemarket.api.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ public class FolderService {
     //trash folder인지 filtering 해야함
     //s3관련 코드 아직 아무것도 안 짬!
     protected final FolderRepository folderRepository;
+    protected final UserRepository userRepository;
     protected final FileFolderRepository fileFolderRepository;
     private final UserService userService;
 
@@ -71,18 +75,20 @@ public class FolderService {
     }
 
     @Transactional
-    public void favoriteFolder(Integer folderId) {
+    public boolean favoriteFolder(Integer folderId) {
         Folder folder = folderRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
         ));
         if(folder.isFavorite()){
             folder.setFavorite(false);
+            folderRepository.save(folder);
+            return false;
         }
         else {
             folder.setFavorite(true);
+            folderRepository.save(folder);
+            return true;
         }
-
-        folderRepository.save(folder);
     }
 
     @Transactional

@@ -64,7 +64,7 @@ public class FolderController {
 
     @ApiOperation("해당 폴더를 favorite 값을 변경합니다.")
     @PostMapping(value="/favorite/{folderId}")
-    public ResponseEntity<Void> favoirteFolder(@ApiParam(value="폴더 ID", required = true) @PathVariable final Integer folderId) {
+    public ResponseEntity<Boolean> favoirteFolder(@ApiParam(value="폴더 ID", required = true) @PathVariable final Integer folderId) {
         folderService.favoriteFolder(folderId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
@@ -89,7 +89,7 @@ public class FolderController {
     }
 
     @ApiOperation("해당 폴더를 휴지통에서 완전히 삭제합니다.")
-    @ApiOperation("value=/delete/{fodlerId}")
+    @DeleteMapping("value=/delete/{fodlerId}")
     public ResponseEntity<Void> deleteFolder(@ApiParam(value="폴더 ID", required = true) @PathVariable final Integer folderId) {
         folderService.deleteFolder(folderId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
