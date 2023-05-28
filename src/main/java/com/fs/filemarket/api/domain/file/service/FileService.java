@@ -16,8 +16,6 @@ import com.amazonaws.services.s3.model.*;
 
 import com.fs.filemarket.api.domain.file.File;
 import com.fs.filemarket.api.domain.file.dto.FileResponseDto;
-import com.fs.filemarket.api.domain.folder.Folder;
-import com.fs.filemarket.api.domain.folder.dto.FolderResponseDto;
 import com.fs.filemarket.api.domain.user.User;
 import com.fs.filemarket.api.domain.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +38,6 @@ public class FileService {
     protected final UserService userService;
     protected final FileRepository fileRepository;
     protected final UserRepository userRepository;
-
     private AmazonS3 s3Client;
 //    public void uploadFile(
 //            final String bucketName,
@@ -106,7 +103,6 @@ public class FileService {
         while ((len = inputStream.read(buffer, 0, buffer.length)) != -1) {
             outputStream.write(buffer, 0, len);
         }
-
         log.info("File downloaded from bucket({}): {}", bucketName, keyName);
         return outputStream;
     }
@@ -120,19 +116,17 @@ public class FileService {
             if (objectSummaries.isEmpty()) {
                 break;
             }
-
             objectSummaries.stream()
                     .filter(item -> !item.getKey().endsWith("/"))
-                    .map(S3ObjectSummary::getKey)
-                    .forEach(keys::add);
-
+                    .forEach(summary -> {
+                        String key = summary.getKey();
+                        long contentLength = summary.getSize();
+                    });
             objectListing = s3Client.listNextBatchOfObjects(objectListing);
         }
-
         log.info("Files found in bucket({}): {}", bucketName, keys);
         return keys;
     }
-
     public void deleteFile(
             final String bucketName,
             final String keyName
@@ -154,7 +148,7 @@ public class FileService {
     @Transactional(readOnly = true)
     public FileResponseDto.Info getFileById(Integer fileId){
         return FileResponseDto.Info.of(fileRepository.findById(fileId).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 앨범이 존재하지 않습니다."
+                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 파일이 존재하지 않습니다."
         )));
     }
     // searchFile
@@ -166,7 +160,7 @@ public class FileService {
     @Transactional
     public void favoriteFile(Integer folderId) {
         File file = fileRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
+                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 파일이 존재하지 않습니다."
         ));
         if(file.isFavorite()){
             file.setFavorite(false);
@@ -181,7 +175,7 @@ public class FileService {
     @Transactional
     public String renameFile(Integer folderId, String newName) {
         File file = fileRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
+                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 파일이 존재하지 않습니다."
         ));
         file.setName(newName);
         fileRepository.save(file);
@@ -205,7 +199,7 @@ public class FileService {
     @Transactional
     public Integer restoreFile(Integer fileId) {
         File file = fileRepository.findById(fileId).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
+                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 파일이 존재하지 않습니다."
         ));
         file.setTrash(false);
         file.setDeleted_time(null);
@@ -217,7 +211,7 @@ public class FileService {
     @Transactional
     public void deleteFile(Integer folderId) {
         File file = fileRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
+                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 파일이 존재하지 않습니다."
         ));
         fileRepository.delete(file);
     }
