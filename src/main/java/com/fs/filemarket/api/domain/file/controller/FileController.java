@@ -41,6 +41,7 @@ public class FileController {
     // 파일 중복 이름체크
     // trash안에 폴더가 들어가 있는지, 파일이 들어가있는지 .. ?
     private final FileService fileService;
+
     @ApiOperation("s3에 저장된 파일의 리스트를 반환합니다.")
     @GetMapping("/{bucketName}")
     public ResponseEntity<?> listFiles(
@@ -103,6 +104,7 @@ public class FileController {
     public ResponseEntity<List<String>> getAllFile(@ApiParam(value = "유저 ID", required = true) @PathVariable final Integer userId) {
         return ResponseEntity.ok(fileService.getAllFile(userId));
     }
+
     @ApiOperation("해당 ID의 파일 정보를 가져옵니다.")
     @GetMapping(value = "/{fileId}}")
     public ResponseEntity<FileResponseDto.Info> getFileById(@ApiParam(value="파일 ID", required = true) @PathVariable final Integer fileId) {
