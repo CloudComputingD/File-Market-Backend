@@ -1,5 +1,6 @@
 package com.fs.filemarket.api.domain.folder.controller;
 
+import com.fs.filemarket.api.domain.file.dto.FileResponseDto;
 import com.fs.filemarket.api.domain.folder.dto.FolderResponseDto;
 import com.fs.filemarket.api.domain.folder.service.FolderService;
 import io.swagger.annotations.Api;
@@ -58,7 +59,7 @@ public class FolderController {
 
     @ApiOperation("해당 폴더에 속한 모든 파일을 불러옵니다.")
     @GetMapping(value="/fileList/{folderId}")
-    public ResponseEntity<List<FileResponseDto.~~## >> getAllFolderFile(@ApiParam(value="폴더 ID", required = true) @PathVariable final Integer folderId){
+    public ResponseEntity<List<FileResponseDto.Info>> getAllFolderFile(@ApiParam(value="폴더 ID", required = true) @PathVariable final Integer folderId){
         return ResponseEntity.ok(folderService.getAllFolderFile(folderId));
     }
 
