@@ -5,9 +5,13 @@ import com.fs.filemarket.api.domain.user.User;
 import com.fs.filemarket.api.domain.user.dto.UserDTO;
 import com.fs.filemarket.api.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @Transactional
@@ -41,6 +45,18 @@ public class UserService {
 
     }
 
+    @Transactional(readOnly = true)
+    public User getCurrentUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || authentication.getPrincipal().equals("anonymousUser")) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "로그인 되지 않았습니다."
+            );
+        }
+
+        return (User) authentication.getPrincipal();
+    }
 
 
 }

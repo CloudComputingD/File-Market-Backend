@@ -1,13 +1,17 @@
 package com.fs.filemarket.api.domain.user;
 
+import com.fs.filemarket.api.domain.folder.Folder;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "users")
+@Table(name = "user")
 public class User{
 
     @Id
@@ -25,6 +29,9 @@ public class User{
 
     @Column(nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE})
+    private Set<Folder> folders = new HashSet<>();
 
 
     // JPA 데이터베이스로 저장할 때 Enum 값을 어떤 형태로 저장할지 결정
