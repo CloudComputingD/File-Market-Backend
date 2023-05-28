@@ -10,5 +10,5 @@ import java.util.List;
 
 public interface FileFolderRepository extends JpaRepository<FileFolder, Integer> {
     @Query("select f.file from FileFolder f where f.folder = :folder and f.file.trash = false")
-    List<File> findByFolder(Folder folder);
+    List<File> findAllByFolder(Folder folder);
 }
