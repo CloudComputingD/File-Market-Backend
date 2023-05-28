@@ -49,17 +49,28 @@ public class FileController {
         return ResponseEntity.ok(body);
     }
 
+    // 다중업로드 해야함
+    // 메타데이터 보내바야함
     @ApiOperation("s3에 파일을 업로드합니다.")
     @PostMapping("/{bucketName}/upload")
-    @SneakyThrows(IOException.class)
     public ResponseEntity<?> uploadFile(
             @PathVariable("bucketName") String bucketName,
-            @RequestPart("file") MultipartFile file,
-            @RequestPart("fileName") String fileName
+            @RequestPart("file") List<MultipartFile> multipartFiles
     ) {
-        fileService.uploadFile(bucketName, fileName, file.getSize(), file.getContentType(), file.getInputStream());
+        fileService.uploadFile(bucketName, multipartFiles);
         return ResponseEntity.ok().build();
     }
+//    @PostMapping("/{bucketName}/upload")
+//    @SneakyThrows(IOException.class)
+//    public ResponseEntity<?> uploadFile(
+//            @PathVariable("bucketName") String bucketName,
+//            @RequestPart("file") MultipartFile file,
+//            @RequestPart("fileName") String fileName
+//    ) {
+//        fileService.uploadFile(bucketName, fileName, file.getSize(), file.getContentType(), file.getInputStream());
+//        return ResponseEntity.ok().build();
+//    }
+
 
     @ApiOperation("s3에서 파일을 다운로드합니다.")
     @SneakyThrows

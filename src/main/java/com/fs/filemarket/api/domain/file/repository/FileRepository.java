@@ -1,6 +1,7 @@
 package com.fs.filemarket.api.domain.file.repository;
 
 import com.fs.filemarket.api.domain.file.File;
+import com.fs.filemarket.api.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
