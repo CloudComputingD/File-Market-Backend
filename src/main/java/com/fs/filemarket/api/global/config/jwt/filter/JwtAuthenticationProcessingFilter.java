@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -145,7 +146,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             password = getRandomPassword(10);
         }
 
-         userDetailsUser = org.springframework.security.core.userdetails.User.builder()
+         UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
                 .username(myUser.getEmail())
                 .password(password)
                 .roles(myUser.getRole().name())
