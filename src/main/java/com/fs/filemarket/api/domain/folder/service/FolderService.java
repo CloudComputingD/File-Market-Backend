@@ -1,5 +1,7 @@
 package com.fs.filemarket.api.domain.folder.service;
 
+import com.fs.filemarket.api.domain.file.dto.FileResponseDto;
+import com.fs.filemarket.api.domain.folder.FileFolder;
 import com.fs.filemarket.api.domain.folder.Folder;
 import com.fs.filemarket.api.domain.folder.dto.FolderResponseDto;
 import com.fs.filemarket.api.domain.folder.repository.FileFolderRepository;
@@ -39,7 +41,6 @@ public class FolderService {
                         .created_time(LocalDateTime.now())
                         .user(user)
                         .build()
-
         );
 
         Integer id = folder.getId();
@@ -67,11 +68,12 @@ public class FolderService {
     }
 
     @Transactional(readOnly = true)
-    public List<##dto(file dto)> getAllFolderFile(Integer folderId) {
+    public List<FileResponseDto.Info> getAllFolderFile(Integer folderId) {
         Folder folder = folderRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
         ));
-        return ##dto.file.of(fileFolderRepository.findByFolder(folder));
+        return fileFolderRepository.findAllByFolder(folder)
+                .stream().map(FileResponseDto.Info::of).collect(Collectors.toList());
     }
 
     @Transactional
