@@ -1,5 +1,6 @@
 package com.fs.filemarket.api.domain.folder.repository;
 
+import com.fs.filemarket.api.domain.file.File;
 import com.fs.filemarket.api.domain.folder.FileFolder;
 import com.fs.filemarket.api.domain.folder.Folder;
 import org.springframework.data.jpa.repository.JpaRepository;
