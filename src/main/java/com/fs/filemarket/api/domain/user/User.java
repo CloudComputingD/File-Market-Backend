@@ -1,5 +1,7 @@
 package com.fs.filemarket.api.domain.user;
 
+import com.fs.filemarket.api.domain.file.File;
+import com.fs.filemarket.api.domain.folder.FileFolder;
 import com.fs.filemarket.api.domain.folder.Folder;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,6 +35,8 @@ public class User{
     @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE})
     private Set<Folder> folders = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE})
+    private Set<File> files = new HashSet<>();
 
     // JPA 데이터베이스로 저장할 때 Enum 값을 어떤 형태로 저장할지 결정
     // 기본은 int 로 된 숫자이지만, DB 확인 시 편의성을 위해 문자열로 저장될 수 있도록 선언
