@@ -46,7 +46,7 @@ public class FolderController {
     }
 
     @ApiOperation("해당 ID의 폴더 정보를 가져옵니다.")
-    @GetMapping(value = "/{folderId}}")
+    @GetMapping(value = "/{folderId}")
     public ResponseEntity<FolderResponseDto.Info> getFolderById(@ApiParam(value="폴더 ID", required = true) @PathVariable final Integer folderId) {
         return ResponseEntity.ok(folderService.getFolderById(folderId));
     }
