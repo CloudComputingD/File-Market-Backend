@@ -13,6 +13,8 @@ import java.util.Set;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 @Table(name = "user")
 public class User{
 
@@ -21,13 +23,13 @@ public class User{
     private Integer id;
 
     @Column(nullable = false)
-    private String name;
+    private String name;      // 사용자명
 
     @Column
     private String email;
 
-    @Column(nullable = false, unique = true)
-    private String login_id;
+//    @Column(nullable = false, unique = true)
+//    private String login_id;
 
     @Column(nullable = false)
     private String password;
@@ -50,18 +52,6 @@ public class User{
     private String socialId;         // 로그인 한 소셜 타입의 식별자 값(일반 로그인의 경우, null)
 
     private String refreshToken;
-
-    @Builder
-    public User(Integer id, String name, String email, String login_id, String password, Role role, SocialType socialType, String socialId ) {
-            this.id = id;
-            this.name = name;
-            this.email = email;
-            this.login_id = login_id;
-            this.password = password;
-            this.role = role;
-            this.socialType = socialType;
-            this.socialId = socialId;
-        }
 
 
     // 유저 권한 설정 메소드

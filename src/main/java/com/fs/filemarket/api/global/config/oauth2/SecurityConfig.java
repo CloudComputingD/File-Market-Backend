@@ -29,7 +29,6 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity                 // Spring Security 필터가 스프링 필터체인에 등록됨
-
 public class SecurityConfig{
 
     private final LoginService loginService;
@@ -60,9 +59,9 @@ public class SecurityConfig{
                 // 권한 관리 대상을 지정하는 옵션
                 // URL, HTTP 메소드별로 관리 가능
                 // 아이콘, css, js 관련
-                // 기본 페이지, css, image, js 하위 폴더에 있는 자료들은 모두 접근 가능, h2-console에 접근 가능
-                .requestMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
-                .requestMatchers("/sign-up").permitAll()    // 회원가입 접근 가능
+                // 기본 페이지, css, image 하위 폴더에 있는 자료들은 모두 접근 가능
+                .requestMatchers("/","/css/**","/images/**").permitAll()
+                .requestMatchers("/join").permitAll()    // 회원가입 접근 가능
                 // 설정된 값들 이외 나머지 URL 들은 모두 인증된 사용자(로그인한 사용자)들에게만 허용
                 .anyRequest().authenticated()
 
