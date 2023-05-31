@@ -11,10 +11,12 @@ import com.fs.filemarket.api.domain.user.repository.UserRepository;
 import com.fs.filemarket.api.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -131,12 +133,17 @@ public class FolderService {
         return folderId;
     }
 
-    @Transactional
+    @Scheduled(cron = "* * * * 1 *")
     public void deleteFolder(Integer folderId) {
         Folder folder = folderRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
         ));
-        folderRepository.delete(folder);
+
+        Duration duration = Duration.between(LocalDateTime.now(), folder.getDeleted_time());
+
+        if(duration.toDays() >= 30 ){
+            folderRepository.delete(folder);
+        }
     }
 
     @Transactional(readOnly = true)
