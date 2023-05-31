@@ -73,7 +73,6 @@ public class FileController {
 //        return ResponseEntity.ok().build();
 //    }
 
-
     @ApiOperation("s3에서 파일을 다운로드합니다.")
     @SneakyThrows
     @GetMapping("/{bucketName}/download/{fileName}")
@@ -106,10 +105,11 @@ public class FileController {
     }
 
     @ApiOperation("해당 ID의 파일 정보를 가져옵니다.")
-    @GetMapping(value = "/{fileId}}")
+    @GetMapping(value = "/{fileId}")
     public ResponseEntity<FileResponseDto.Info> getFileById(@ApiParam(value="파일 ID", required = true) @PathVariable final Integer fileId) {
         return ResponseEntity.ok(fileService.getFileById(fileId));
     }
+
     @ApiOperation("파일을 이름으로 검색합니다.")
     @GetMapping(value="/search")
     public ResponseEntity<List<String>> searchFile(@ApiParam(value="파일 이름", required = true) @RequestParam String fileName) {
