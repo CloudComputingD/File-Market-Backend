@@ -10,8 +10,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     // 데이터베이스에 존재하는 이메일인지 확인하는 method
     Optional<User> findByEmail(String email);
-    Optional<User> findByLoginId(String login_id);
-
+ //   Optional<User> findByLoginId(String login_id);
     Optional<User> findByRefreshToken(String refreshToken);
 
     Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
