@@ -60,7 +60,7 @@ public class SecurityConfig{
                 // URL, HTTP 메소드별로 관리 가능
                 // 아이콘, css, js 관련
                 // 기본 페이지, css, image 하위 폴더에 있는 자료들은 모두 접근 가능
-                .requestMatchers("/","/css/**","/images/**","/file/**").permitAll()
+                .requestMatchers("/","/user/**","/folders/**","/files/**").permitAll()
                 .requestMatchers("/join").permitAll()    // 회원가입 접근 가능
                 // 설정된 값들 이외 나머지 URL 들은 모두 인증된 사용자(로그인한 사용자)들에게만 허용
                 .anyRequest().authenticated()
