@@ -56,14 +56,15 @@ public class SecurityConfig{
                 // authorizeHttpRequests - URL 별 권한 관리를 설정하는 옵션 시작점
                 //                       - 이게 선언되어야만 requestMatchers 옵션 사용 가능
                 .authorizeHttpRequests()
-                // 권한 관리 대상을 지정하는 옵션
-                // URL, HTTP 메소드별로 관리 가능
-                // 아이콘, css, js 관련
-                // 기본 페이지, css, image 하위 폴더에 있는 자료들은 모두 접근 가능
-                .requestMatchers("/","/user/**","/folders/**","/files/**").permitAll()
-                .requestMatchers("/join").permitAll()    // 회원가입 접근 가능
-                // 설정된 값들 이외 나머지 URL 들은 모두 인증된 사용자(로그인한 사용자)들에게만 허용
-                .anyRequest().authenticated()
+//                // 권한 관리 대상을 지정하는 옵션
+//                // URL, HTTP 메소드별로 관리 가능
+//                // 아이콘, css, js 관련
+//                // 기본 페이지, css, image 하위 폴더에 있는 자료들은 모두 접근 가능
+//                .requestMatchers("/","/user/**","/folders/**","/files/**").permitAll()
+//                .requestMatchers("/join").permitAll()    // 회원가입 접근 가능
+//                // 설정된 값들 이외 나머지 URL 들은 모두 인증된 사용자(로그인한 사용자)들에게만 허용
+//                .anyRequest().authenticated()
+                .anyRequest().permitAll()
 
 
                 // OAuth2 로그인
