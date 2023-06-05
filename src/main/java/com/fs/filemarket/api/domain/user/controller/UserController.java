@@ -14,17 +14,17 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/")
-    public String Home() {
-        return "home";
-    }
+//    @GetMapping("/")
+//    public String Home() {
+//        return "home";
+//    }
+//
+//    @GetMapping("/user/join")
+//    public String createUserForm() {
+//        return "user/createUserForm";
+//    }
 
-    @GetMapping("/user/join")
-    public String createUserForm() {
-        return "user/createUserForm";
-    }
-
-    @PostMapping("/user/join")
+    @PostMapping("/join")
     public String join(@RequestBody UserDTO userDTO) throws Exception {
         userService.join(userDTO);
 
