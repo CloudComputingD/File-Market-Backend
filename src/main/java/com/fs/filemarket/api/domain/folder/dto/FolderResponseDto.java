@@ -4,7 +4,8 @@ import com.fs.filemarket.api.domain.file.dto.FileResponseDto;
 import com.fs.filemarket.api.domain.folder.FileFolder;
 import com.fs.filemarket.api.domain.folder.Folder;
 import com.fs.filemarket.api.domain.user.User;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,8 +15,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Schema(description = "folder의 responsedto")
 public class FolderResponseDto {
-    @ApiModel(value = "폴더 세부 정보")
     @Builder
     @Getter
     @Setter
