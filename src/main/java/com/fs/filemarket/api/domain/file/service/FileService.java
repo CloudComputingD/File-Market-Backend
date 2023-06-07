@@ -3,6 +3,7 @@ package com.fs.filemarket.api.domain.file.service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import com.fs.filemarket.api.domain.user.User;
 import com.fs.filemarket.api.domain.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.fs.filemarket.api.domain.file.repository.FileRepository;
@@ -208,12 +210,16 @@ public class FileService {
         return fileId;
     }
     // deleteFile
+    @Scheduled (cron = "* * * * 1 *")
     @Transactional
     public void deleteFile(Integer folderId) {
         File file = fileRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 ID를 가진 파일이 존재하지 않습니다."
         ));
-        fileRepository.delete(file);
+        Duration duration = Duration.between(LocalDateTime.now(), file.getDeleted_time());
+        if (duration.toDays() >= 30){
+            fileRepository.delete(file);
+        }
     }
     // getAllTrashFile
     @Transactional(readOnly = true)

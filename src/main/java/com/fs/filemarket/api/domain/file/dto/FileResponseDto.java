@@ -1,10 +1,8 @@
 package com.fs.filemarket.api.domain.file.dto;
 
 import com.fs.filemarket.api.domain.file.File;
-import com.fs.filemarket.api.domain.folder.FileFolder;
 import com.fs.filemarket.api.domain.user.User;
-import com.fs.filemarket.api.domain.folder.dto.FolderResponseDto;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,9 +12,8 @@ import javax.swing.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Schema(description = "file의 responsedto")
 public class FileResponseDto {
-    @ApiModel(value = "파일 세부 정보")
     @Builder
     @Getter
     @Setter

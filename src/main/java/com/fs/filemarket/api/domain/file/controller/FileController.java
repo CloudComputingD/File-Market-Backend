@@ -7,13 +7,12 @@ import com.fs.filemarket.api.domain.file.File;
 import com.fs.filemarket.api.domain.file.dto.FileResponseDto;
 import com.fs.filemarket.api.domain.file.enumeration.FileMediaType;
 import com.fs.filemarket.api.domain.file.service.FileService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.SneakyThrows;
 import lombok.val;
 import lombok.RequiredArgsConstructor;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 // spring에서 제공하는 인터페이스로, http 요청에서 업로드된 파일을 나타낸다.
 // multipartfile을 사용하여 클라이언트가 전송한 파일을 서버에서 처리하고 저장할 수 있다.
 
-@Api(tags = {"File Controller"})
+@Tag(name="File", description = "File controller 설명")
 @RestController
 @RequestMapping("/file")
 @RequiredArgsConstructor
@@ -42,7 +41,7 @@ public class FileController {
     // trash안에 폴더가 들어가 있는지, 파일이 들어가있는지 .. ?
     private final FileService fileService;
 
-    @ApiOperation("s3에 저장된 파일의 리스트를 반환합니다.")
+    @Operation(summary="s3에 저장된 파일의 리스트를 반환합니다.")
     @GetMapping("/{bucketName}")
     public ResponseEntity<?> listFiles(
             @PathVariable("bucketName") String bucketName
@@ -53,7 +52,7 @@ public class FileController {
 
     // 다중업로드 해야함
     // 메타데이터 보내바야함
-    @ApiOperation("s3에 파일을 업로드합니다.")
+    @Operation(summary="s3에 파일을 업로드합니다.")
     @PostMapping("/{bucketName}/upload")
     public ResponseEntity<?> uploadFile(
             @PathVariable("bucketName") String bucketName,
@@ -73,7 +72,7 @@ public class FileController {
 //        return ResponseEntity.ok().build();
 //    }
 
-    @ApiOperation("s3에서 파일을 다운로드합니다.")
+    @Operation(summary="s3에서 파일을 다운로드합니다.")
     @SneakyThrows
     @GetMapping("/{bucketName}/download/{fileName}")
     public ResponseEntity<?> downloadFile(
@@ -88,7 +87,7 @@ public class FileController {
                 .body(body.toByteArray());
     }
 
-    @ApiOperation("s3에서 파일을 삭제합니다.")
+    @Operation(summary="s3에서 파일을 삭제합니다.")
     @DeleteMapping("/{bucketName}/{fileName}")
     public ResponseEntity<?> deleteFile(
             @PathVariable("bucketName") String bucketName,
@@ -98,60 +97,60 @@ public class FileController {
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation("유저의 전체 파일 list를 반환합니다.")
+    @Operation(summary="유저의 전체 파일 list를 반환합니다.")
     @GetMapping(value = "/list/{userId}") // list/{userId}로 요청이 들어오면
-    public ResponseEntity<List<String>> getAllFile(@ApiParam(value = "유저 ID", required = true) @PathVariable final Integer userId) {
+    public ResponseEntity<List<String>> getAllFile(@Parameter(description = "유저 ID", required = true) @PathVariable final Integer userId) {
         return ResponseEntity.ok(fileService.getAllFile(userId));
     }
 
-    @ApiOperation("해당 ID의 파일 정보를 가져옵니다.")
+    @Operation(summary="해당 ID의 파일 정보를 가져옵니다.")
     @GetMapping(value = "/{fileId}")
-    public ResponseEntity<FileResponseDto.Info> getFileById(@ApiParam(value="파일 ID", required = true) @PathVariable final Integer fileId) {
+    public ResponseEntity<FileResponseDto.Info> getFileById(@Parameter(description="파일 ID", required = true) @PathVariable final Integer fileId) {
         return ResponseEntity.ok(fileService.getFileById(fileId));
     }
 
-    @ApiOperation("파일을 이름으로 검색합니다.")
+    @Operation(summary="파일을 이름으로 검색합니다.")
     @GetMapping(value="/search")
-    public ResponseEntity<List<String>> searchFile(@ApiParam(value="파일 이름", required = true) @RequestParam String fileName) {
+    public ResponseEntity<List<String>> searchFile(@Parameter(description="파일 이름", required = true) @RequestParam String fileName) {
         return ResponseEntity.ok(fileService.searchFile(fileName));
     }
 
-    @ApiOperation("파일에 좋아요 값을 설정합니다.")
+    @Operation(summary="파일에 좋아요 값을 설정합니다.")
     @PostMapping(value="/favorite/{fileId}")
-    public ResponseEntity<Void> favoriteFile(@ApiParam(value="파일 ID", required = true) @PathVariable final Integer fileId) {
+    public ResponseEntity<Void> favoriteFile(@Parameter(description="파일 ID", required = true) @PathVariable final Integer fileId) {
         fileService.favoriteFile(fileId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
-    @ApiOperation("파일 이름을 변경합니다.")
+    @Operation(summary="파일 이름을 변경합니다.")
     @PostMapping(value="/rename/{fileId}")
-    public ResponseEntity<String> renameFile(@ApiParam(value="파일 ID", required = true) @PathVariable final Integer fileId,
-                                               @RequestParam String newName){
+    public ResponseEntity<String> renameFile(@Parameter(description="파일 ID", required = true) @PathVariable final Integer fileId,
+                                             @RequestParam String newName){
         return ResponseEntity.ok(fileService.renameFile(fileId,newName));
     }
 
-    @ApiOperation("파일을 휴지통에 넣습니다.")
+    @Operation(summary="파일을 휴지통에 넣습니다.")
     @PostMapping(value="/trash/{fileId}")
-    public ResponseEntity<Integer> trashFile(@ApiParam(value="파일 ID", required = true) @PathVariable final Integer fileId) {
+    public ResponseEntity<Integer> trashFile(@Parameter(description="파일 ID", required = true) @PathVariable final Integer fileId) {
         return ResponseEntity.ok(fileService.trashFile(fileId));
     }
 
-    @ApiOperation("파일을 휴지통에서 복구합니다.")
+    @Operation(summary="파일을 휴지통에서 복구합니다.")
     @PostMapping("value=/restore/{fileId}")
-    public ResponseEntity<Integer> restoreFile(@ApiParam(value="파일 ID", required = true) @PathVariable final Integer fileId) {
+    public ResponseEntity<Integer> restoreFile(@Parameter(description="파일 ID", required = true) @PathVariable final Integer fileId) {
         return ResponseEntity.ok(fileService.restoreFile(fileId));
     }
 
-    @ApiOperation("파일을 휴지통에서 완전히 삭제합니다.")
+    @Operation(summary="파일을 휴지통에서 완전히 삭제합니다.")
     @DeleteMapping("value=/delete/{fileId}")
-    public ResponseEntity<Void> deleteFile(@ApiParam(value="파일 ID", required = true) @PathVariable final Integer fileId) {
+    public ResponseEntity<Void> deleteFile(@Parameter(description="파일 ID", required = true) @PathVariable final Integer fileId) {
         fileService.deleteFile(fileId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
-    @ApiOperation("휴지통에 있는 파일을 보여줍니다.")
+    @Operation(summary="휴지통에 있는 파일을 보여줍니다.")
     @GetMapping("value=/trash/list/{userId}")
-    public ResponseEntity<List<String>> getAllTrashFile(@ApiParam(value="유저 ID", required = true) @PathVariable final Integer userId){
+    public ResponseEntity<List<String>> getAllTrashFile(@Parameter(description="유저 ID", required = true) @PathVariable final Integer userId){
         return ResponseEntity.ok(fileService.getAllTrashFile(userId));
     }
 }
