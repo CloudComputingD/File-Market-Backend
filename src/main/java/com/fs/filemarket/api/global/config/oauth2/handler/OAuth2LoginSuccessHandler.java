@@ -36,7 +36,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             if(oAuth2User.getRole() == Role.GUEST) {
                 String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
                 response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
-                response.sendRedirect("oauth2/join"); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트
+                response.sendRedirect("/oauth2/join"); // 메인 홈 화면으로 리다이렉트
 
                 jwtService.sendAccessAndRefreshToken(response, accessToken, null);
                 // User Role 을 GUEST -> USER 로 업데이트
@@ -45,6 +45,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 findUser.authorizeUser();
             } else {
                 // 2. 한 번 이상 OAuth2 로그인 했던 유저
+                log.info("2. 한 번 이상 OAuth2 로그인 했던 유저");
                 loginSuccess(response, oAuth2User);    // 로그인에 성공한 경우 access, refresh 토큰 생성
             }
         } catch (Exception e) {
