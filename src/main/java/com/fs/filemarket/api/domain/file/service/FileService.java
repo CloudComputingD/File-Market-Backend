@@ -41,7 +41,13 @@ public class FileService {
     protected final FileRepository fileRepository;
     protected final UserRepository userRepository;
     private AmazonS3 s3Client;
-//    public void uploadFile(
+
+    @Autowired
+    public void setS3Client(AmazonS3 s3Client) {
+        this.s3Client = s3Client;
+    }
+
+    //    public void uploadFile(
 //            final String bucketName,
 //            final String keyName,
 //            final Long contentLength,

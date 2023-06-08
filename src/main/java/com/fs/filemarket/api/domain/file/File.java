@@ -19,6 +19,7 @@ import java.util.Set;
 @NoArgsConstructor //파라미터가 없는 기본 생성자를 생성
 @AllArgsConstructor //모든 필드 값을 파라미터로 받는 생성자를 생성
 @Entity // 클래스를 엔티티로 표시하여 관계형 데이터베이스의 테이블을 나타낸다
+@Table(name = "files")
 @EntityListeners(AuditingEntityListener.class)
 public class File {
     @Id
