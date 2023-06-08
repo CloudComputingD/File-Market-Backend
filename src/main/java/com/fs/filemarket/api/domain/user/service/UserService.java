@@ -19,8 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 // 자체 로그인, 회원가입 시 사용하는 화원 가입 API
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    protected final UserRepository userRepository;
+    protected final PasswordEncoder passwordEncoder;
 
     public void join(UserDTO userDTO) throws Exception{
 
@@ -30,7 +30,6 @@ public class UserService {
 
         User user = User.builder()
                 .email(userDTO.getEmail())
-//                .login_id(userDTO.getLogin_id())
                 .password(userDTO.getPassword())
                 .name(userDTO.getName())
                 .role(Role.USER)
