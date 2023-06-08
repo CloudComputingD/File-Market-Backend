@@ -28,30 +28,18 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/file")
 @RequiredArgsConstructor
 public class FileController {
-    // 파일 업로드
-    // 다중파일 업로드
-    // 파일 다운로드
-    // 유저의 전체 파일 list
-    // 해당 아이디를 가진 파일 정보 반환
-    // 파일 검색
-    // 파일 삭제 -> 휴지통
-    // 파일 좋아요
-    // 파일 이름 변경
-    // 파일 중복 이름체크
-    // trash안에 폴더가 들어가 있는지, 파일이 들어가있는지 .. ?
     private final FileService fileService;
 
-    @Operation(summary="s3에 저장된 파일의 리스트를 반환합니다.")
-    @GetMapping(value = "/{bucketName}")
-    public ResponseEntity<?> listFiles(
-            @PathVariable("bucketName") String bucketName
-    ) {
-        val body = fileService.listFiles(bucketName);
-        return ResponseEntity.ok(body);
-    }
+//    @Operation(summary="s3에 저장된 파일의 리스트를 반환합니다.")
+//    @GetMapping(value = "/{bucketName}")
+//    public ResponseEntity<?> listFiles(
+//            @PathVariable("bucketName") String bucketName
+//    ) {
+//        val body = fileService.listFiles(bucketName);
+//        return ResponseEntity.ok(body);
+//    }
 
-    // 다중업로드 해야함
-    // 메타데이터 보내바야함
+
     @Operation(summary="s3에 파일을 업로드합니다.")
     @PostMapping(value = "/{bucketName}/upload")
     public ResponseEntity<?> uploadFile(
@@ -61,6 +49,7 @@ public class FileController {
         fileService.uploadFile(bucketName, multipartFiles);
         return ResponseEntity.ok().build();
     }
+
 //    @PostMapping("/{bucketName}/upload")
 //    @SneakyThrows(IOException.class)
 //    public ResponseEntity<?> uploadFile(
