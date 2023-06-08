@@ -1,5 +1,7 @@
 HELP.md
 docker-compose.yml
+Dockerfile
+!**/src/main/**/api/domain/user/service/UserDebugService.java
 build
 .gradle
 build/
