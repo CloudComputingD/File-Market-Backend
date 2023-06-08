@@ -4,6 +4,7 @@ import com.fs.filemarket.api.domain.folder.FileFolder;
 import com.fs.filemarket.api.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.security.cert.Extension;
@@ -50,9 +51,11 @@ public class File {
     @Column(nullable = false)
     private boolean trash;
 
+    @JsonIgnore
     @OneToMany(mappedBy ="file")
     private Set<FileFolder> folders = new HashSet<>();
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="user_id", nullable = false)
     private User user;
