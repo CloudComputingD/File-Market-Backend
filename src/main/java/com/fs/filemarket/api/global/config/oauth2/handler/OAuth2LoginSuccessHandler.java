@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -36,17 +37,32 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             if(oAuth2User.getRole() == Role.GUEST) {
                 String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
                 response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
-                response.sendRedirect("/oauth2/join"); // 메인 홈 화면으로 리다이렉트
 
+
+                log.info("여긴 통과 하나?");
                 jwtService.sendAccessAndRefreshToken(response, accessToken, null);
+                log.info("------------------------");
+
                 // User Role 을 GUEST -> USER 로 업데이트
-                User findUser = userRepository.findByEmail(oAuth2User.getEmail())
-                        .orElseThrow(() -> new IllegalArgumentException("이메일에 해당하는 유저가 없습니다."));
-                findUser.authorizeUser();
+                try {
+                    Optional<User> userOptional = userRepository.findByEmail(oAuth2User.getEmail());
+                    User findUser = userOptional.orElseThrow(() -> new IllegalArgumentException("이메일에 해당하는 유저가 없습니다."));
+
+                    findUser.authorizeUser();
+                    userRepository.save(findUser);
+
+                } catch (IllegalArgumentException e) {
+                    System.out.println(e.getMessage());
+                }
+
+                response.sendRedirect("/"); // 메인 홈 화면으로 리다이렉트
+
             } else {
                 // 2. 한 번 이상 OAuth2 로그인 했던 유저
                 log.info("2. 한 번 이상 OAuth2 로그인 했던 유저");
                 loginSuccess(response, oAuth2User);    // 로그인에 성공한 경우 access, refresh 토큰 생성
+
+                response.sendRedirect("/"); // 메인 홈 화면으로 리다이렉트
             }
         } catch (Exception e) {
             throw e;
