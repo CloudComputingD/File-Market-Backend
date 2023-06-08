@@ -8,12 +8,14 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class S3Config {
-    @Value("AKIAWGR3HPH734MTPUEJ")
+    @Value("${S3.accessKey}")
     private String accessKey;
 
-    @Value("xMBfzpVrVIp3UrhQuyyuuknlu0MO5qYLw+AIeg5A")
+    @Value("${S3.secretKey}")
     private String secretKey;
 
     @Bean

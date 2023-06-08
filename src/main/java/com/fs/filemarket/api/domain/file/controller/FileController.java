@@ -39,7 +39,6 @@ public class FileController {
 //        return ResponseEntity.ok(body);
 //    }
 
-
     @Operation(summary="s3에 파일을 업로드합니다.")
     @PostMapping(value = "/{bucketName}/upload")
     public ResponseEntity<?> uploadFile(
