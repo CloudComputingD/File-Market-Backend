@@ -1,5 +1,6 @@
 package com.fs.filemarket.api.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fs.filemarket.api.domain.file.File;
 import com.fs.filemarket.api.domain.folder.FileFolder;
 import com.fs.filemarket.api.domain.folder.Folder;
@@ -35,9 +36,11 @@ public class User{
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE})
+    @JsonIgnore
     private Set<Folder> folders = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE})
+    @JsonIgnore
     private Set<File> files = new HashSet<>();
 
     // JPA 데이터베이스로 저장할 때 Enum 값을 어떤 형태로 저장할지 결정
