@@ -29,23 +29,27 @@ public class FolderResponseDto {
         private LocalDateTime deleted_time;
         private boolean favorite;
         private User user;
+        private boolean trash;
         private Set<FileResponseDto.Info> files;
 
         public static Info of(Folder folder) {
-            return Info.builder()
+            Set<FileResponseDto.Info> fileInfos = folder.getFiles()
+                    .stream()
+                    .map(FileFolder::getFile)
+                    .map(FileResponseDto.Info::of) // FileFolder에서 File로 매핑 후 FileResponseDto.Info 생성
+                    .collect(Collectors.toSet());
+            InfoBuilder builder = Info.builder()
                     .id(folder.getId())
                     .name(folder.getName())
                     .created_time(folder.getCreated_time())
                     .modified_time(folder.getModified_time())
                     .deleted_time(folder.getDeleted_time())
                     .favorite(folder.isFavorite())
-                    .user(folder.getUser())
-                    .files(folder.getFiles()
-                            .stream()
-                            .map(FileFolder::getFile)
-                            .map(FileResponseDto.Info::of)
-                            .collect(Collectors.toSet()))
-                    .build();
+                    .trash(folder.isTrash())
+                    .files(fileInfos)
+                    .user(folder.getUser());
+
+            return builder.build();
         }
     }
 }

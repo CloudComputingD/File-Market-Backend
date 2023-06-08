@@ -34,7 +34,7 @@ public class FolderService {
     private final UserService userService;
 
     @Transactional
-    public String postFolder(String name){
+    public Integer postFolder(String name){
         User user= userService.getCurrentUser();
 
         Folder folder = folderRepository.save(
@@ -46,7 +46,7 @@ public class FolderService {
         );
 
         Integer id = folder.getId();
-        return id.toString();
+        return id;
     }
 
     @Transactional(readOnly = true)

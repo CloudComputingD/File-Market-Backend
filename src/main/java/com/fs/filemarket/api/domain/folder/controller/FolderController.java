@@ -34,8 +34,8 @@ public class FolderController {
     @Operation(summary = "폴더를 생성합니다.")
     @PostMapping(value = "")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ResponseEntity<String> postFolder(@Parameter(description = "폴더 정보")
-                                           @Valid @RequestParam String name) {
+    public ResponseEntity<String> postFolder(@Parameter(description = "폴더 이름")
+                                           @RequestParam String name) {
         return ResponseEntity.status(HttpStatus.CREATED).body("/folder/" + folderService.postFolder(name));
     }
 
@@ -58,7 +58,7 @@ public class FolderController {
     }
 
     @Operation(summary ="해당 폴더에 속한 모든 파일을 불러옵니다.")
-    @GetMapping(value="/fileList/{folderId}")
+    @GetMapping(value="/filelist/{folderId}")
     public ResponseEntity<List<FileResponseDto.Info>> getAllFolderFile(@Parameter(description ="폴더 ID", required = true) @PathVariable final Integer folderId){
         return ResponseEntity.ok(folderService.getAllFolderFile(folderId));
     }
@@ -84,20 +84,20 @@ public class FolderController {
     }
 
     @Operation(summary ="해당 폴더를 휴지통에서 복구합니다.")
-    @PostMapping("value=/restore/{folderId}")
+    @PostMapping(value="/restore/{folderId}")
     public ResponseEntity<Integer> restoreFolder(@Parameter(description ="폴더 ID", required = true) @PathVariable final Integer folderId) {
         return ResponseEntity.ok(folderService.restoreFolder(folderId));
     }
 
     @Operation(summary ="해당 폴더를 휴지통에서 완전히 삭제합니다.")
-    @DeleteMapping("value=/delete/{fodlerId}")
+    @DeleteMapping(value="/delete/{fodlerId}")
     public ResponseEntity<Void> deleteFolder(@Parameter(description ="폴더 ID", required = true) @PathVariable final Integer folderId) {
         folderService.deleteFolder(folderId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @Operation(summary ="휴지통에 있는 폴더를 보여줍니다.")
-    @GetMapping("value=/trash/list/{userId}")
+    @GetMapping(value="/trash/list/{userId}")
     public ResponseEntity<List<String>> getAllTrashFolder(@Parameter(description ="유저 ID", required = true) @PathVariable final Integer userId){
         return ResponseEntity.ok(folderService.getAllTrashFolder(userId));
     }

@@ -8,10 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface FolderRepository extends JpaRepository<Folder, Integer> {
-    @Query("select f.name from Folder f where f.user = :user and f.trash=false")
+    @Query("select f from Folder f where f.user = :user and f.trash=false")
     List<Folder> findByUser(User user);
-    @Query("select f.name from Folder f where f.trash=false")
+    @Query("SELECT f FROM Folder f WHERE f.name = :name AND f.trash = false")
     List<Folder> findByName(String name);
-    @Query("select f.name from Folder f where f.user = :user and f.trash=true")
+
+    @Query("select f from Folder f where f.user = :user and f.trash = true")
     List<Folder> findByUserAndTrash(User user);
 }
