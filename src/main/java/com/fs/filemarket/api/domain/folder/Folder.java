@@ -1,5 +1,6 @@
 package com.fs.filemarket.api.domain.folder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fs.filemarket.api.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,10 +41,12 @@ public class Folder {
     @Column(nullable = false)
     private boolean trash;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "folder", cascade = {CascadeType.REMOVE})
     private Set<FileFolder> files = new HashSet<>();
 
