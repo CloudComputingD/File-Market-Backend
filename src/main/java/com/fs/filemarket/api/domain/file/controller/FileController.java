@@ -42,7 +42,7 @@ public class FileController {
     private final FileService fileService;
 
     @Operation(summary="s3에 저장된 파일의 리스트를 반환합니다.")
-    @GetMapping("/{bucketName}")
+    @GetMapping(value = "/{bucketName}")
     public ResponseEntity<?> listFiles(
             @PathVariable("bucketName") String bucketName
     ) {
@@ -53,7 +53,7 @@ public class FileController {
     // 다중업로드 해야함
     // 메타데이터 보내바야함
     @Operation(summary="s3에 파일을 업로드합니다.")
-    @PostMapping("/{bucketName}/upload")
+    @PostMapping(value = "/{bucketName}/upload")
     public ResponseEntity<?> uploadFile(
             @PathVariable("bucketName") String bucketName,
             @RequestPart("file") List<MultipartFile> multipartFiles
@@ -74,7 +74,7 @@ public class FileController {
 
     @Operation(summary="s3에서 파일을 다운로드합니다.")
     @SneakyThrows
-    @GetMapping("/{bucketName}/download/{fileName}")
+    @GetMapping(value = "/{bucketName}/download/{fileName}")
     public ResponseEntity<?> downloadFile(
             @PathVariable("bucketName") String bucketName,
             @PathVariable("fileName") String fileName
@@ -88,7 +88,7 @@ public class FileController {
     }
 
     @Operation(summary="s3에서 파일을 삭제합니다.")
-    @DeleteMapping("/{bucketName}/{fileName}")
+    @DeleteMapping(value = "/{bucketName}/{fileName}")
     public ResponseEntity<?> deleteFile(
             @PathVariable("bucketName") String bucketName,
             @PathVariable("fileName") String fileName
@@ -136,20 +136,20 @@ public class FileController {
     }
 
     @Operation(summary="파일을 휴지통에서 복구합니다.")
-    @PostMapping("value=/restore/{fileId}")
+    @PostMapping(value="/restore/{fileId}")
     public ResponseEntity<Integer> restoreFile(@Parameter(description="파일 ID", required = true) @PathVariable final Integer fileId) {
         return ResponseEntity.ok(fileService.restoreFile(fileId));
     }
 
     @Operation(summary="파일을 휴지통에서 완전히 삭제합니다.")
-    @DeleteMapping("value=/delete/{fileId}")
+    @DeleteMapping(value="/delete/{fileId}")
     public ResponseEntity<Void> deleteFile(@Parameter(description="파일 ID", required = true) @PathVariable final Integer fileId) {
         fileService.deleteFile(fileId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @Operation(summary="휴지통에 있는 파일을 보여줍니다.")
-    @GetMapping("value=/trash/list/{userId}")
+    @GetMapping(value="/trash/list/{userId}")
     public ResponseEntity<List<String>> getAllTrashFile(@Parameter(description="유저 ID", required = true) @PathVariable final Integer userId){
         return ResponseEntity.ok(fileService.getAllTrashFile(userId));
     }
