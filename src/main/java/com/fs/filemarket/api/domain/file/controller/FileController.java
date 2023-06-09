@@ -93,7 +93,6 @@ public class FileController {
         return ResponseEntity.ok(fileService.getAllFile(userId));
     }
 
-
 //    @Operation(summary="유저의 전체 파일 list를 반환합니다.")
 //    @GetMapping(value = "/list/{userId}") // list/{userId}로 요청이 들어오면
 //    public ResponseEntity<List<String>> getAllFile(@Parameter(description = "유저 ID", required = true) @PathVariable final Integer userId) {
