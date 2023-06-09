@@ -11,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
+import java.io.IOException;
+
 @Slf4j
 @RequiredArgsConstructor
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -38,6 +40,12 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         log.info("로그인에 성공하였습니다. 이메일 : {}", email);
         log.info("로그인에 성공하였습니다. AccessToken : {}", accessToken);
         log.info("발급된 AccessToken 만료 기간 : {}", accessTokenExpiration);
+
+        try {
+            response.sendRedirect("/dashboard");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String extractUsername(Authentication authentication) {
