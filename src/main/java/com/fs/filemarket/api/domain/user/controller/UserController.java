@@ -19,6 +19,7 @@ public class UserController {
 
     // 서비스 첫 화면
 
+    @Operation(summary = "로그인 화면을 요청합니다..")
     @GetMapping("/")
     public String signIn() {
         return "signIn";
@@ -31,6 +32,12 @@ public class UserController {
     @GetMapping("/signup")
     public String signupForm() {
         return "signupForm";
+    }
+
+    @Operation(summary = "대시보드 화면을 요청합니다..")
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "dashboard";
     }
 
     // 자체 회원가입
