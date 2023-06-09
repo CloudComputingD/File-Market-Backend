@@ -3,13 +3,13 @@ package com.fs.filemarket.api.domain.user.controller;
 import com.fs.filemarket.api.domain.user.User;
 import com.fs.filemarket.api.domain.user.dto.UserDTO;
 import com.fs.filemarket.api.domain.user.service.UserService;
-import com.mysql.cj.log.Log;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "User", description = "User Controller")
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -19,13 +19,14 @@ public class UserController {
 
     // 서비스 첫 화면
 
-//    @GetMapping("/")
-//    public String index() {
-//        return "index";
-//    }
+    @GetMapping("/")
+    public String signIn() {
+        return "signIn";
+    }
 
     /** 회원가입 **/
 
+    @Operation(summary = "회원가입화면을 요청합니다..")
     // 회원가입(sign-up) 화면 요청
     @GetMapping("/signup")
     public String signupForm() {
@@ -33,6 +34,7 @@ public class UserController {
     }
 
     // 자체 회원가입
+    @Operation(summary = "자체회원가입을 진행합니다.")
     @PostMapping("/signup")
     public String signup(@RequestBody UserDTO userDTO) throws Exception {
         userService.join(userDTO);
@@ -41,6 +43,7 @@ public class UserController {
     }
 
     // oauth2 를 통한 회원가입
+    @Operation(summary = "oauth2를 통한 회원가입 화면을 요청합니다.")
     @GetMapping("oauth2/signup")
     public String oauth2Signup(){
 
@@ -54,6 +57,7 @@ public class UserController {
 
 
     // 유저 정보 반환
+    @Operation(summary = "현재 유저 정보를 반환합니다.")
     @GetMapping("/current")
     public ResponseEntity<User> getCurrentUser() {
         User currentUser = userService.getCurrentUser();
