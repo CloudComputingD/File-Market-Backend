@@ -87,9 +87,18 @@ public class FileController {
 
     @Operation(summary="유저의 전체 파일 list를 반환합니다.")
     @GetMapping(value = "/list/{userId}") // list/{userId}로 요청이 들어오면
-    public ResponseEntity<List<String>> getAllFile(@Parameter(description = "유저 ID", required = true) @PathVariable final Integer userId) {
+    public ResponseEntity<List<String>> getAllFile(
+            @PathVariable("userId") Integer userId
+    ) {
         return ResponseEntity.ok(fileService.getAllFile(userId));
     }
+
+
+//    @Operation(summary="유저의 전체 파일 list를 반환합니다.")
+//    @GetMapping(value = "/list/{userId}") // list/{userId}로 요청이 들어오면
+//    public ResponseEntity<List<String>> getAllFile(@Parameter(description = "유저 ID", required = true) @PathVariable final Integer userId) {
+//        return ResponseEntity.ok(fileService.getAllFile(userId));
+//    }
 
     @Operation(summary="해당 ID의 파일 정보를 가져옵니다.")
     @GetMapping(value = "/{fileId}")
@@ -140,5 +149,11 @@ public class FileController {
     @GetMapping(value="/trash/list/{userId}")
     public ResponseEntity<List<String>> getAllTrashFile(@Parameter(description="유저 ID", required = true) @PathVariable final Integer userId){
         return ResponseEntity.ok(fileService.getAllTrashFile(userId));
+    }
+
+    @Operation(summary="유저가 지닌 파일의 전체 크기를 보여줍니다.")
+    @GetMapping(value="/size/{userId}")
+    public ResponseEntity<Integer> getUserFileSize(@Parameter(description="유저 ID", required = true) @PathVariable final Integer userId){
+        return ResponseEntity.ok(fileService.getUserFileSize(userId));
     }
 }

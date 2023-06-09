@@ -155,6 +155,7 @@ public class FileService {
     // getFileByID
     @Transactional(readOnly = true)
     public FileResponseDto.Info getFileById(Integer fileId){
+//        System.out.println("여기서 오류 ..?");
         return FileResponseDto.Info.of(fileRepository.findById(fileId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 ID를 가진 파일이 존재하지 않습니다."
         )));
@@ -234,5 +235,14 @@ public class FileService {
                 HttpStatus.NOT_FOUND, "해당하는 유저가 존재하지 않습니다."
         ));
         return fileRepository.findByUserAndTrash(user).stream().map(File::getName).collect(Collectors.toList());
+    }
+    // getUserFileSize
+    @Transactional(readOnly = true)
+    public Integer getUserFileSize(Integer userId){
+//        log.info("File uploaded to bucket({}): {});
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "해당하는 유저가 존재하지 않습니다."
+        ));
+        return fileRepository.findTotalFileSizeByUser(user);
     }
 }
