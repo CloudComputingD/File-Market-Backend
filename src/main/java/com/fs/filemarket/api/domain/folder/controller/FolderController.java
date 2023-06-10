@@ -41,7 +41,7 @@ public class FolderController {
 
     @Operation(summary ="유저의 전체 폴더 list를 반환합니다.")
     @GetMapping(value = "/list/{userId}")
-    public ResponseEntity<List<String>> getAllFolder(@Parameter(description = "유저 ID", required = true) @PathVariable final Integer userId) {
+    public ResponseEntity<List<FolderResponseDto.Info>> getAllFolder(@Parameter(description = "유저 ID", required = true) @PathVariable final Integer userId) {
         return ResponseEntity.ok(folderService.getAllFolder(userId));
     }
 
@@ -53,7 +53,7 @@ public class FolderController {
 
     @Operation(summary ="폴더를 이름으로 검색합니다.")
     @GetMapping(value="/search")
-    public ResponseEntity<List<String>> searchFolder(@Parameter(description ="폴더 이름", required = true) @RequestParam String folderName) {
+    public ResponseEntity<List<FolderResponseDto.Info>> searchFolder(@Parameter(description ="폴더 이름", required = true) @RequestParam String folderName) {
         return ResponseEntity.ok(folderService.searchFolder(folderName));
     }
 
@@ -63,7 +63,7 @@ public class FolderController {
         return ResponseEntity.ok(folderService.getAllFolderFile(folderId));
     }
 
-    @Operation(summary ="해당 폴더를 favorite 값을 변경합니다.")
+    @Operation(summary ="해당 폴더의 favorite 값을 변경합니다.")
     @PostMapping(value="/favorite/{folderId}")
     public ResponseEntity<Boolean> favoirteFolder(@Parameter(description ="폴더 ID", required = true) @PathVariable final Integer folderId) {
         folderService.favoriteFolder(folderId);
