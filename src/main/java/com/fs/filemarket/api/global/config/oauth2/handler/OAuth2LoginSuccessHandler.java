@@ -52,7 +52,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                     System.out.println(e.getMessage());
                 }
 
-//                response.sendRedirect("/"); // 로그인 화면으로 리다이렉트
+                response.sendRedirect("/"); // 로그인 화면으로 리다이렉트
 
             } else {
                 // 2. 한 번 이상 OAuth2 로그인 했던 유저
