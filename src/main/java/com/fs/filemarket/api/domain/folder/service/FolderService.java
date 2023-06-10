@@ -50,11 +50,11 @@ public class FolderService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> getAllFolder(Integer userId) {
+    public List<FolderResponseDto.Info> getAllFolder(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 유저가 존재하지 않습니다."
         ));
-        return folderRepository.findByUser(user).stream().map(Folder::getName).collect(Collectors.toList());
+        return folderRepository.findByUser(user).stream().map(FolderResponseDto.Info::of).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -65,8 +65,8 @@ public class FolderService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> searchFolder(String name){
-        return folderRepository.findByName(name).stream().map(Folder::getName).collect(Collectors.toList());
+    public List<FolderResponseDto.Info> searchFolder(String name){
+        return folderRepository.findByName(name).stream().map(FolderResponseDto.Info::of).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
