@@ -24,13 +24,13 @@ public class UserController {
     private final UserService userService;
 
 
-//    // 서비스 첫 화면
-//
-//    @Operation(summary = "로그인 화면을 요청합니다..")
-//    @GetMapping("/")
-//    public String signIn() {
-//        return "signIn";
-//    }
+    // 서비스 첫 화면
+
+    @Operation(summary = "로그인 화면을 요청합니다..")
+    @GetMapping("/")
+    public String signIn() {
+        return "signIn";
+    }
 
     /** 회원가입 **/
 
