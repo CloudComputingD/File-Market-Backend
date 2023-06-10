@@ -46,21 +46,6 @@ public class FileService {
     public void setS3Client(AmazonS3 s3Client) {
         this.s3Client = s3Client;
     }
-
-    //    public void uploadFile(
-//            final String bucketName,
-//            final String keyName,
-//            final Long contentLength,
-//            final String contentType,
-//            final InputStream value
-//    ) throws AmazonClientException {
-//        ObjectMetadata metadata = new ObjectMetadata();
-//        metadata.setContentLength(contentLength);
-//        metadata.setContentType(contentType);
-//
-//        s3Client.putObject(bucketName, keyName, value, metadata);
-//        log.info("File uploaded to bucket({}): {}", bucketName, keyName);
-//    }
     public void uploadFile(
             final String bucketName,
             List<MultipartFile> multipartFiles
@@ -146,24 +131,23 @@ public class FileService {
     // 여기서부터 db접근
     // getAllFile
     @Transactional(readOnly = true)
-    public List<String> getAllFile(Integer userId) {
+    public List<FileResponseDto.Info> getAllFile(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 유저가 존재하지 않습니다."
         ));
-        return fileRepository.findByUser(user).stream().map(File::getName).collect(Collectors.toList());
+        return fileRepository.findByUser(user).stream().map(FileResponseDto.Info::of).collect(Collectors.toList());
     }
     // getFileByID
     @Transactional(readOnly = true)
     public FileResponseDto.Info getFileById(Integer fileId){
-//        System.out.println("여기서 오류 ..?");
         return FileResponseDto.Info.of(fileRepository.findById(fileId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 ID를 가진 파일이 존재하지 않습니다."
         )));
     }
     // searchFile
     @Transactional(readOnly = true)
-    public List<String> searchFile(String name){
-        return fileRepository.findByName(name).stream().map(File::getName).collect(Collectors.toList());
+    public List<FileResponseDto.Info> searchFile(String name){
+        return fileRepository.findByName(name).stream().map(FileResponseDto.Info::of).collect(Collectors.toList());
     }
     // favoriteFile
     @Transactional
@@ -216,6 +200,7 @@ public class FileService {
 
         return fileId;
     }
+
     // deleteFile
     @Scheduled (cron = "* * * * 1 *")
     @Transactional
