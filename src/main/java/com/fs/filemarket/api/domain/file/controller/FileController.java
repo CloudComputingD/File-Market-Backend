@@ -49,17 +49,6 @@ public class FileController {
         return ResponseEntity.ok().build();
     }
 
-//    @PostMapping("/{bucketName}/upload")
-//    @SneakyThrows(IOException.class)
-//    public ResponseEntity<?> uploadFile(
-//            @PathVariable("bucketName") String bucketName,
-//            @RequestPart("file") MultipartFile file,
-//            @RequestPart("fileName") String fileName
-//    ) {
-//        fileService.uploadFile(bucketName, fileName, file.getSize(), file.getContentType(), file.getInputStream());
-//        return ResponseEntity.ok().build();
-//    }
-
     @Operation(summary="s3에서 파일을 다운로드합니다.")
     @SneakyThrows
     @GetMapping(value = "/{bucketName}/download/{fileName}")
@@ -87,17 +76,11 @@ public class FileController {
 
     @Operation(summary="유저의 전체 파일 list를 반환합니다.")
     @GetMapping(value = "/list/{userId}") // list/{userId}로 요청이 들어오면
-    public ResponseEntity<List<String>> getAllFile(
+    public ResponseEntity<List<FileResponseDto.Info>> getAllFile(
             @PathVariable("userId") Integer userId
     ) {
         return ResponseEntity.ok(fileService.getAllFile(userId));
     }
-
-//    @Operation(summary="유저의 전체 파일 list를 반환합니다.")
-//    @GetMapping(value = "/list/{userId}") // list/{userId}로 요청이 들어오면
-//    public ResponseEntity<List<String>> getAllFile(@Parameter(description = "유저 ID", required = true) @PathVariable final Integer userId) {
-//        return ResponseEntity.ok(fileService.getAllFile(userId));
-//    }
 
     @Operation(summary="해당 ID의 파일 정보를 가져옵니다.")
     @GetMapping(value = "/{fileId}")
@@ -107,7 +90,7 @@ public class FileController {
 
     @Operation(summary="파일을 이름으로 검색합니다.")
     @GetMapping(value="/search")
-    public ResponseEntity<List<String>> searchFile(@Parameter(description="파일 이름", required = true) @RequestParam String fileName) {
+    public ResponseEntity<List<FileResponseDto.Info>> searchFile(@Parameter(description="파일 이름", required = true) @RequestParam String fileName) {
         return ResponseEntity.ok(fileService.searchFile(fileName));
     }
 
