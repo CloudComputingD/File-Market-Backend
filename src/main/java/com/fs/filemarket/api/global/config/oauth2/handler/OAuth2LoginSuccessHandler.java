@@ -52,14 +52,14 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                     System.out.println(e.getMessage());
                 }
 
-                response.sendRedirect("/"); // 로그인 화면으로 리다이렉트
+//                response.sendRedirect("/"); // 로그인 화면으로 리다이렉트
 
             } else {
                 // 2. 한 번 이상 OAuth2 로그인 했던 유저
                 log.info("2. 한 번 이상 OAuth2 로그인 했던 유저");
                 loginSuccess(response, oAuth2User);    // 로그인에 성공한 경우 access, refresh 토큰 생성
 
-                response.sendRedirect("/dashboard"); // 메인 홈 화면으로 리다이렉트
+//                response.sendRedirect("/dashboard"); // 메인 홈 화면으로 리다이렉트
             }
         } catch (Exception e) {
             throw e;
