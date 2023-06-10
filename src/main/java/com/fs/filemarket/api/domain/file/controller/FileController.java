@@ -87,7 +87,7 @@ public class FileController {
 
     @Operation(summary="유저의 전체 파일 list를 반환합니다.")
     @GetMapping(value = "/list/{userId}") // list/{userId}로 요청이 들어오면
-    public ResponseEntity<List<String>> getAllFile(
+    public ResponseEntity<List<FileResponseDto.Info>> getAllFile(
             @PathVariable("userId") Integer userId
     ) {
         return ResponseEntity.ok(fileService.getAllFile(userId));
@@ -107,7 +107,7 @@ public class FileController {
 
     @Operation(summary="파일을 이름으로 검색합니다.")
     @GetMapping(value="/search")
-    public ResponseEntity<List<String>> searchFile(@Parameter(description="파일 이름", required = true) @RequestParam String fileName) {
+    public ResponseEntity<List<FileResponseDto.Info>> searchFile(@Parameter(description="파일 이름", required = true) @RequestParam String fileName) {
         return ResponseEntity.ok(fileService.searchFile(fileName));
     }
 
