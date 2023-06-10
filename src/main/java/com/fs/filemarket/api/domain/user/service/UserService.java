@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -52,6 +54,12 @@ public class UserService {
 
         return (User) authentication.getPrincipal();
     }
+
+
+    public Optional<User> userInfo(String email){
+        return userRepository.findByEmail(email);
+    }
+
 
 
 }
