@@ -1,13 +1,20 @@
 package com.fs.filemarket.api.domain.user.controller;
 
 import com.fs.filemarket.api.domain.user.User;
+import com.fs.filemarket.api.domain.user.UserInfo;
 import com.fs.filemarket.api.domain.user.dto.UserDTO;
 import com.fs.filemarket.api.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.charset.Charset;
+import java.util.Optional;
 
 @Tag(name = "User", description = "User Controller")
 @RestController
@@ -17,13 +24,13 @@ public class UserController {
     private final UserService userService;
 
 
-    // 서비스 첫 화면
-
-    @Operation(summary = "로그인 화면을 요청합니다..")
-    @GetMapping("/")
-    public String signIn() {
-        return "signIn";
-    }
+//    // 서비스 첫 화면
+//
+//    @Operation(summary = "로그인 화면을 요청합니다..")
+//    @GetMapping("/")
+//    public String signIn() {
+//        return "signIn";
+//    }
 
     /** 회원가입 **/
 
@@ -66,9 +73,26 @@ public class UserController {
     // 유저 정보 반환
     @Operation(summary = "현재 유저 정보를 반환합니다.")
     @GetMapping("/current")
-    public ResponseEntity<User> getCurrentUser() {
+    public ResponseEntity<UserDTO> getCurrentUser() {
         User currentUser = userService.getCurrentUser();
-        return ResponseEntity.ok(currentUser);
+        UserDTO userDTO = new UserDTO();
+
+        userDTO.setId(currentUser.getId());
+        userDTO.setName(currentUser.getName());
+        userDTO.setEmail(currentUser.getEmail());
+        userDTO.setRole(currentUser.getRole());
+
+        return ResponseEntity.ok(userDTO);
+    }
+
+    @GetMapping("/info")
+    public Optional<UserInfo> userInfo(Model model, @RequestParam String email) {
+        Optional<User> user = userService.userInfo(email);
+
+        Optional<UserInfo> userInfo = user.map(u -> new UserInfo(u. getId(), u.getName(), u.getEmail(), u.getRole()));
+
+        model.addAttribute("userInfo", userInfo);
+        return userInfo;
     }
 
 
