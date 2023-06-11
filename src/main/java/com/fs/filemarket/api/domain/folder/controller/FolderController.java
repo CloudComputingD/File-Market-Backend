@@ -89,9 +89,16 @@ public class FolderController {
         return ResponseEntity.ok(folderService.restoreFolder(folderId));
     }
 
-    @Operation(summary ="해당 폴더를 휴지통에서 완전히 삭제합니다.")
-    @DeleteMapping(value="/delete/{fodlerId}")
-    public ResponseEntity<Void> deleteFolder(@Parameter(description ="폴더 ID", required = true) @PathVariable final Integer folderId) {
+    @Operation(summary ="30일에 한 번씩 폴더를 휴지통에서 완전히 삭제합니다.")
+    @DeleteMapping(value="/autodelete/{folderId}")
+    public ResponseEntity<Void> autodeleteFolder(@Parameter(description ="폴더 ID", required = true) @PathVariable final Integer folderId) {
+        folderService.autodeleteFolder(folderId);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
+
+    @Operation(summary = "휴지통 파일을 직접 삭제합니다.")
+    @DeleteMapping(value="/delete/{folderId}")
+    public ResponseEntity<Void> deleteFolder(@Parameter(description ="폴더 ID", required = true) @PathVariable final Integer folderId){
         folderService.deleteFolder(folderId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
