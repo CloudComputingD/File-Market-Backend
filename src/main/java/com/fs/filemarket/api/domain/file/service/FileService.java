@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import com.amazonaws.AmazonClientException;
@@ -17,6 +18,10 @@ import com.amazonaws.services.s3.model.*;
 
 import com.fs.filemarket.api.domain.file.File;
 import com.fs.filemarket.api.domain.file.dto.FileResponseDto;
+import com.fs.filemarket.api.domain.folder.FileFolder;
+import com.fs.filemarket.api.domain.folder.Folder;
+import com.fs.filemarket.api.domain.folder.repository.FileFolderRepository;
+import com.fs.filemarket.api.domain.folder.repository.FolderRepository;
 import com.fs.filemarket.api.domain.user.User;
 import com.fs.filemarket.api.domain.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +43,9 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class FileService {
     protected final UserService userService;
+    protected final FileFolderRepository fileFolderRepository;
     protected final FileRepository fileRepository;
+    protected final FolderRepository folderRepository;
     protected final UserRepository userRepository;
     private AmazonS3 s3Client;
 
@@ -46,24 +53,29 @@ public class FileService {
     public void setS3Client(AmazonS3 s3Client) {
         this.s3Client = s3Client;
     }
+
     public void uploadFile(
             final String bucketName,
+            Integer folderId,
             List<MultipartFile> multipartFiles
     ) throws AmazonClientException {
-        User user= userService.getCurrentUser();
+        User user = userService.getCurrentUser();
+
         multipartFiles.forEach(file -> {
             String fileName = file.getOriginalFilename();
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(file.getSize());
             objectMetadata.setContentType(file.getContentType());
-//            log.info("가자");
+
             try (InputStream inputStream = file.getInputStream()) {
                 PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata)
                         .withCannedAcl(CannedAccessControlList.PublicRead);
                 s3Client.putObject(putObjectRequest);
+
                 log.info("Content Type: {}", objectMetadata.getContentType());
                 log.info("Content Length: {}", objectMetadata.getContentLength());
                 log.info("File uploaded to bucket({}): {}", bucketName, fileName);
+
                 File save_file = fileRepository.save(
                         File.builder()
                                 .name(fileName)
@@ -74,11 +86,73 @@ public class FileService {
                                 .extension(objectMetadata.getContentType())
                                 .build()
                 );
+                // 폴더 아이디가 유효한 경우에만 폴더 객체 조회
+                if (folderId != null && folderId > 0) {
+                    Folder folder = folderRepository.findById(folderId)
+                            .orElseThrow(() -> new RuntimeException("폴더를 찾을 수 없습니다"));
+                    FileFolder fileFolder = FileFolder.builder()
+                            .file(save_file)
+                            .folder(folder) // 수정된 부분: 폴더 객체 설정
+                            .build();
+                    fileFolderRepository.save(fileFolder);
+                }
+
+
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
     }
+
+
+
+    //    public void uploadFile(
+//            final String bucketName,
+//            Integer folderId,
+//            List<MultipartFile> multipartFiles
+//    ) throws AmazonClientException {
+//        User user= userService.getCurrentUser();
+//        AtomicReference<Folder> folder = null;
+//
+//        multipartFiles.forEach(file -> {
+//            String fileName = file.getOriginalFilename();
+//            ObjectMetadata objectMetadata = new ObjectMetadata();
+//            objectMetadata.setContentLength(file.getSize());
+//            objectMetadata.setContentType(file.getContentType());
+//            try (InputStream inputStream = file.getInputStream()) {
+//                PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata)
+//                        .withCannedAcl(CannedAccessControlList.PublicRead);
+//                s3Client.putObject(putObjectRequest);
+//                log.info("Content Type: {}", objectMetadata.getContentType());
+//                log.info("Content Length: {}", objectMetadata.getContentLength());
+//                log.info("File uploaded to bucket({}): {}", bucketName, fileName);
+//                File save_file = fileRepository.save(
+//                        File.builder()
+//                                .name(fileName)
+//                                .created_time(LocalDateTime.now())
+//                                .modified_time(LocalDateTime.now())
+//                                .user(user)
+//                                .file_size((int) objectMetadata.getContentLength())
+//                                .extension(objectMetadata.getContentType())
+//                                .build()
+//                );
+//                // 폴더 아이디가 유효한 경우에만 폴더 객체 조회
+//                if (folderId != null && folderId > 0) {
+//                    folder.set(folderRepository.findById(folderId)
+//                            .orElseThrow(() -> new RuntimeException("폴더를 찾을 수 없습니다")));
+//                }
+//
+//                FileFolder fileFolder = FileFolder.builder()
+//                        .file(save_file)
+//                        .folder(folder)
+//                        .build();
+//                // FileFolder를 File 엔티티에 추가
+//                save_file.getFolders().add(fileFolder);
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
+//    }
     public String createFileName(String fileName){
         return UUID.randomUUID().toString().concat(fileName);
     }
