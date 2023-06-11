@@ -53,7 +53,7 @@ public class File {
     private boolean trash;
 
     @JsonIgnore
-    @OneToMany(mappedBy ="file")
+    @OneToMany(mappedBy ="file", cascade = {CascadeType.REMOVE})
     private Set<FileFolder> folders = new HashSet<>();
 
     @JsonIgnore
