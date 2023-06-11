@@ -7,13 +7,10 @@ import com.fs.filemarket.api.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.Charset;
 import java.util.Optional;
 
 @Tag(name = "User", description = "User Controller")
@@ -95,11 +92,9 @@ public class UserController {
         return userInfo;
     }
 
-
     @GetMapping("/jwt-test")
     public String jwtTest() {
         return "jwtTest 요청 성공";
     }
-
 
 }

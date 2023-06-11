@@ -17,3 +17,4 @@ public interface FileRepository extends JpaRepository<File, Integer> {
     Integer findTotalFileSizeByUser(User user);
 
 }
+

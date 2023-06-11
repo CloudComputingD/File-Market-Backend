@@ -43,9 +43,10 @@ public class FileController {
     @PostMapping(value = "/{bucketName}/upload")
     public ResponseEntity<?> uploadFile(
             @PathVariable("bucketName") String bucketName,
+            @RequestHeader(value = "folderId", required = false) Integer folderId,
             @RequestPart("file") List<MultipartFile> multipartFiles
     ) {
-        fileService.uploadFile(bucketName, multipartFiles);
+        fileService.uploadFile(bucketName, folderId, multipartFiles);
         return ResponseEntity.ok().build();
     }
 
