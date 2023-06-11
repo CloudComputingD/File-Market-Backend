@@ -289,11 +289,11 @@ public class FileService {
     }
     // getAllTrashFile
     @Transactional(readOnly = true)
-    public List<String> getAllTrashFile(Integer userId) {
+    public List<FileResponseDto.Info>  getAllTrashFile(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 유저가 존재하지 않습니다."
         ));
-        return fileRepository.findByUserAndTrash(user).stream().map(File::getName).collect(Collectors.toList());
+        return fileRepository.findByUserAndTrash(user).stream().map(FileResponseDto.Info::of).collect(Collectors.toList());
     }
     // getUserFileSize
     @Transactional(readOnly = true)

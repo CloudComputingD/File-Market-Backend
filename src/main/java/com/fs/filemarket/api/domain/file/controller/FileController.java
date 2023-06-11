@@ -130,7 +130,7 @@ public class FileController {
 
     @Operation(summary="휴지통에 있는 파일을 보여줍니다.")
     @GetMapping(value="/trash/list/{userId}")
-    public ResponseEntity<List<String>> getAllTrashFile(@Parameter(description="유저 ID", required = true) @PathVariable final Integer userId){
+    public ResponseEntity<List<FileResponseDto.Info>> getAllTrashFile(@Parameter(description="유저 ID", required = true) @PathVariable final Integer userId){
         return ResponseEntity.ok(fileService.getAllTrashFile(userId));
     }
 
