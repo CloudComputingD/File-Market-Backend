@@ -134,7 +134,7 @@ public class FolderService {
     }
 
     @Scheduled(cron = "* * * * 1 *")
-    public void deleteFolder(Integer folderId) {
+    public void autodeleteFolder(Integer folderId) {
         Folder folder = folderRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
         ));
@@ -144,6 +144,14 @@ public class FolderService {
         if(duration.toDays() >= 30 ){
             folderRepository.delete(folder);
         }
+    }
+
+    public void deleteFolder(Integer folderId) {
+        Folder folder = folderRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 폴더가 존재하지 않습니다."
+        ));
+
+        folderRepository.delete(folder);
     }
 
     @Transactional(readOnly = true)
