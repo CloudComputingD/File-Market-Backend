@@ -15,5 +15,6 @@ public interface FileRepository extends JpaRepository<File, Integer> {
     List<File> findByUserAndTrash(User user);
     @Query("select SUM(f.file_size) FROM File f WHERE f.user = :user")
     Integer findTotalFileSizeByUser(User user);
+
 }
 

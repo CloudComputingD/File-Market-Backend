@@ -98,7 +98,7 @@ public class FolderController {
 
     @Operation(summary ="휴지통에 있는 폴더를 보여줍니다.")
     @GetMapping(value="/trash/list/{userId}")
-    public ResponseEntity<List<String>> getAllTrashFolder(@Parameter(description ="유저 ID", required = true) @PathVariable final Integer userId){
+    public ResponseEntity<List<FolderResponseDto.Info>> getAllTrashFolder(@Parameter(description ="유저 ID", required = true) @PathVariable final Integer userId){
         return ResponseEntity.ok(folderService.getAllTrashFolder(userId));
     }
 }

@@ -147,10 +147,10 @@ public class FolderService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> getAllTrashFolder(Integer userId) {
+    public List<FolderResponseDto.Info> getAllTrashFolder(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 유저가 존재하지 않습니다."
         ));
-        return folderRepository.findByUserAndTrash(user).stream().map(Folder::getName).collect(Collectors.toList());
+        return folderRepository.findByUserAndTrash(user).stream().map(FolderResponseDto.Info::of).collect(Collectors.toList());
     }
 }
