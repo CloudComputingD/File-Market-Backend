@@ -275,17 +275,27 @@ public class FileService {
         return fileId;
     }
 
-    // deleteFile
+    // autodeleteFile
     @Scheduled (cron = "* * * * 1 *")
     @Transactional
-    public void deleteFile(Integer folderId) {
-        File file = fileRepository.findById(folderId).orElseThrow(() -> new ResponseStatusException(
+    public void autodeleteFile(Integer fileId) {
+        File file = fileRepository.findById(fileId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 ID를 가진 파일이 존재하지 않습니다."
         ));
         Duration duration = Duration.between(LocalDateTime.now(), file.getDeleted_time());
         if (duration.toDays() >= 30){
+            System.out.println("들어오니");
             fileRepository.delete(file);
         }
+    }
+
+    //deleteFile
+    @Transactional
+    public void deleteFile(Integer fileId) {
+        File file = fileRepository.findById(fileId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "해당하는 ID를 가진 파일이 존재하지 않습니다."
+        ));
+        fileRepository.delete(file);
     }
     // getAllTrashFile
     @Transactional(readOnly = true)
@@ -298,7 +308,6 @@ public class FileService {
     // getUserFileSize
     @Transactional(readOnly = true)
     public Integer getUserFileSize(Integer userId){
-//        log.info("File uploaded to bucket({}): {});
         User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "해당하는 유저가 존재하지 않습니다."
         ));

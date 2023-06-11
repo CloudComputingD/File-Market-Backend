@@ -128,6 +128,15 @@ public class FileController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
+    @Operation(summary="30일에 한 번씩 파일을 휴지통에서 완전히 삭제합니다.")
+    @DeleteMapping(value="/autodelete/{fileId}")
+    public ResponseEntity<Void> autodeleteFile(@Parameter(description="파일 ID", required = true) @PathVariable final Integer fileId) {
+        fileService.autodeleteFile(fileId);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
+
+
+
     @Operation(summary="휴지통에 있는 파일을 보여줍니다.")
     @GetMapping(value="/trash/list/{userId}")
     public ResponseEntity<List<FileResponseDto.Info>> getAllTrashFile(@Parameter(description="유저 ID", required = true) @PathVariable final Integer userId){
