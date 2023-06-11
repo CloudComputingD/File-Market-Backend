@@ -90,7 +90,7 @@ public class FolderController {
     }
 
     @Operation(summary ="해당 폴더를 휴지통에서 완전히 삭제합니다.")
-    @DeleteMapping(value="/delete/{fodlerId}")
+    @DeleteMapping(value="/delete/{folderId}")
     public ResponseEntity<Void> deleteFolder(@Parameter(description ="폴더 ID", required = true) @PathVariable final Integer folderId) {
         folderService.deleteFolder(folderId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
