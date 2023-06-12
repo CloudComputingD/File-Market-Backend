@@ -4,8 +4,10 @@ import com.fs.filemarket.api.domain.file.File;
 import com.fs.filemarket.api.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
+@Repository
 public interface FileRepository extends JpaRepository<File, Integer> {
     @Query("select f from File f where f.user = :user and f.trash=false")
     List<File> findByUser(User user);
