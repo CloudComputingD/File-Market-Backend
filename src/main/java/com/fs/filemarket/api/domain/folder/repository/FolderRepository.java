@@ -4,9 +4,11 @@ import com.fs.filemarket.api.domain.folder.Folder;
 import com.fs.filemarket.api.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface FolderRepository extends JpaRepository<Folder, Integer> {
     @Query("select f from Folder f where f.user = :user and f.trash=false")
     List<Folder> findByUser(User user);
