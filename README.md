@@ -12,4 +12,4 @@ $ SNAPSHOT_JAR=your-project-name-$VERSION-SNAPSHOT.jar
 $ cp $JAR_PATH $SNAPSHOT_JAR
 ```
 
-이후 https://github.com/CloudComputingD/Local-Deployment를 참고하여 데모 사용이 가능합니다. 
+이후 https://github.com/CloudComputingD/Local-Deployment 를 참고하여 데모 사용이 가능합니다. 
